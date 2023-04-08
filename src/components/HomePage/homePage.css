@@ -1,0 +1,284 @@
+/* General Styles */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header Styles */
+
+header {
+  background-color:#3406ea;
+  color: #fff;
+  padding: 10px 0;
+}
+
+header .logo img {
+  height: 50px;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+nav li {
+  margin: 0 10px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+a:hover {
+  color: #1e1e1e;
+}
+
+/* Hero Section Styles */
+
+.hero {
+  background-color: #f1f1f1;
+  padding: 100px 0;
+}
+
+.hero-text h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.hero-text p {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.cta-btn {
+  display: inline-block;
+  background-color: #4285f4;
+  color: #fff;
+  padding: 12px 30px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.cta-btn:hover {
+  background-color: #0a0a0b;
+}
+
+/* Features Section Styles */
+
+.features {
+  padding: 80px 0;
+}
+
+.features h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.features p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+/* Footer Styles */
+
+footer {
+  background-color: #222;
+  color: #fff;
+  padding: 50px 0;
+}
+
+footer .footer-logo img {
+  height: 40px;
+}
+
+footer nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+footer li {
+  margin: 0 20px;
+}
+
+footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 768px) {
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav li {
+    margin: 10px 0;
+  }
+
+  footer nav ul {
+    justify-content: center;
+  }
+
+  footer li {
+    margin: 10px 0;
+  }
+}
+/* here my new style */
+
+.hero {
+  background-color: #f2f2f2;
+ background-image: url(../../asset/ear.avif) ; 
+ background-size: cover;
+ background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  
+
+}
+
+.hero .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+ 
+}
+
+.hero .hero-text {
+  max-width: 600px;
+  color: #ffffff;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.hero .hero-text h1 {
+  font-size: 64px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.hero .hero-text p {
+  font-size: 24px;
+  margin-bottom: 32px;
+}
+
+.hero .hero-text .cta-btn {
+  display: inline-block;
+  padding: 16px 32px;
+  background-color: #4CAF50;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 40px;
+  transition: background-color 0.3s ease;
+}
+
+.hero .hero-text .cta-btn:hover {
+  background-color: #3e8e41;
+}
+.features {
+  padding: 80px 0;
+  background-color: #fff;
+  text-align: center;
+}
+
+.features h2 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.features .container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.features .feature-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background-color: #f6f6f6;
+  margin-bottom: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.features .feature-item h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.features .feature-item p {
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.features .feature-item .btn {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 12px 40px;
+  background-color: #0077ff;
+  color: #fff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.features .feature-item .btn:hover {
+  background-color: #0052cc;
+}
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 50px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+  max-width: 350px;
+  margin: 0 auto;
+  margin-bottom: 50px;
+}
+
+.feature-item:hover {
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
+.feature-item h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.feature-item p {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: #777;
+}

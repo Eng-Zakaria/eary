@@ -1,16 +1,7 @@
-.sidebar{
+.sidebar {
   height: 100vh;
- background-color: #f8f9fa;
-}
-.sidebar li{
-  padding: 10px 5px;
-  text-align: center;
-}
-.sidebar li a{
-  text-decoration: none;
-  color: #000;
-  font-size: 20px;
-
+  background-color: #010112;
+  background-image: url('https://www.shutterstock.com/image-photo/female-ear-hands-close-copy-space-1484273711');
 }
 
 
