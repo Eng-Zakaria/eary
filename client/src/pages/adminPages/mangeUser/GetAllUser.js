@@ -2,20 +2,29 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Table, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { getAuthUser } from "../../../helper/Storage";
 
 const GetAllUser = () => {
   const [users, setUsers] = useState([]);
-
+  const auth = getAuthUser();
   useEffect(() => {
     axios
-      .get("http://localhost:4000/users")
+      .get("http://localhost:4000/users", {
+        headers: {
+          token: auth.token,
+        },
+      })
       .then((res) => setUsers(res.data))
       .catch((err) => console.log(err));
   }, []);
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:4000/users/${id}`)
+      .delete(`http://localhost:4000/users/${id}`, {
+        headers: {
+          token: auth.token,
+        },
+      })
       .then((res) => {
         alert("User deleted successfully");
         setUsers(users.filter((user) => user.id !== id));
@@ -25,7 +34,16 @@ const GetAllUser = () => {
 
   const handleStatusChange = (id, status) => {
     axios
-      .patch(`http://localhost:4000/users/${id}`, { status: status })
+      .put(
+        `http://localhost:4000/users/${id}`,
+        {
+          headers: {
+            token: auth.token,
+          },
+        },
+
+        { status: status }
+      )
       .then((res) => {
         alert("User status updated successfully");
         setUsers(
@@ -54,6 +72,7 @@ const GetAllUser = () => {
               <th>Username</th>
               <th>Email</th>
               <th>Role</th>
+              <th>phone</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -65,11 +84,12 @@ const GetAllUser = () => {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
+                <td>{user.phone}</td>
                 <td>
                   <Form.Check
                     type="switch"
                     id={`status-switch-${user.id}`}
-                    label={user.status ? "active" : "inactive"}
+                    label={user.status ? "Active" : "Inactive"}
                     checked={user.status}
                     onChange={(e) =>
                       handleStatusChange(user.id, e.target.checked)

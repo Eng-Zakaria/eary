@@ -27,47 +27,45 @@ const Header = () => {
               {" Eary"}
             </Navbar.Brand>
           </Link>
+          {!auth && (
+            <Nav className="me-auto">
+              <Link className="nav-link" to="contuct">
+                contuct us
+              </Link>
+              <Link className="nav-link" to="about">
+                about
+              </Link>
+            </Nav>
+          )}
 
-          <Nav className="me-auto">
-            {!auth && (
-              <>
-                <Link className="nav-link" to="contuct">
-                  contuct us
-                </Link>
-                <Link className="nav-link" to="about">
-                  about
-                </Link>
-              </>
-            )}
-          </Nav>
-          <Nav className="me-auto">
-            {auth && auth.role === 1 && (
-              <>
+          {auth && auth.role === 1 && (
+            <>
+              <Nav className="me-auto">
                 <Link className="nav-link" to={"/manage-user"}>
                   Manage user
                 </Link>
                 <Link className="nav-link" to={"/manage-question"}>
                   Manage question
                 </Link>
-              </>
-            )}
-          </Nav>
+              </Nav>
+            </>
+          )}
           <Nav className="ms-auto">
-            {!auth && (
-              <>
+          {!auth && (
+            <>
+             
                 <Link className="nav-link" to="login">
                   login
                 </Link>
                 <Link className="nav-link" to="register">
                   register
                 </Link>
-              </>
-            )}
-            {auth && (
-              <Link className="nav-link" onClick={Logout}>
-                logout
-              </Link>
-            )}
+            
+            </>
+          )}
+          
+           
+            {auth && <Nav.Link onClick={Logout}>Logout</Nav.Link>}
           </Nav>
         </Container>
       </Navbar>
