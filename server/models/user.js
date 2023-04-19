@@ -8,13 +8,13 @@ class User {
     this.email = email;
     this.password = password;
     this.phone = phone;
-    this.status = status || "active";
+    this.status = status || "inactive";
     this.role = role || "0";
     this.token = token;
   }
   static async getAllUsers() {
     return new Promise((resolve, reject) => {
-      db.query("SELECT * FROM user", (err, res) => {
+      db.query("SELECT * FROM users", (err, res) => {
         if (err) return reject(err);
         else {
           const users = res.map(
@@ -43,7 +43,7 @@ class User {
         if (err) return reject(err);
         else {
           db.query(
-            `INSERT INTO user (name, email, password, phone, status, role, token) VALUES ("${name}", "${email}", "${hash}", "${phone}", "${status}", "${role}", "${token}")`,
+            `INSERT INTO users (name, email, password, phone, status, role, token) VALUES ("${name}", "${email}", "${hash}", "${phone}", "${status}", "${role}", "${token}")`,
             (err, res) => {
               if (err) return reject(err);
               else {
@@ -67,13 +67,13 @@ class User {
   }
   static async getUserById(id) {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM user WHERE id = ?`;
+      const sql = `SELECT * FROM users WHERE id = ?`;
       db.query(sql, [id], (err, res) => {
         if (err) {
           console.log(err);
           reject(err);
         } else if (res.length === 0) {
-          reject(new Error(`User ${id} not found`));
+          reject(new Error(`Users ${id} not found`));
         } else {
           const { id, name, email, password, phone, status, role, token } =
             res[0];
@@ -86,7 +86,7 @@ class User {
   }
   static async getUserByEmail(email) {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM user WHERE email = ?`;
+      const sql = `SELECT * FROM users WHERE email = ?`;
       db.query(sql, [email], (err, res) => {
         if (err) {
           console.log(err);
@@ -105,7 +105,7 @@ class User {
   }
   update() {
     return new Promise((resolve, reject) => {
-      const sql = `UPDATE user SET name = ?, email = ?, password = ?, phone = ?, status = ?, role = ?, token = ? WHERE id = ?`;
+      const sql = `UPDATE users SET name = ?, email = ?, password = ?, phone = ?, status = ?, role = ?, token = ? WHERE id = ?`;
       db.query(
         sql,
         [
@@ -129,7 +129,7 @@ class User {
   }
   delete() {
     return new Promise((resolve, reject) => {
-      const sql = `DELETE FROM user WHERE id = ?`;
+      const sql = `DELETE FROM users WHERE id = ?`;
       db.query(sql, [this.id], (err, res) => {
         if (err) return reject(err);
         else if (res.affectedRows === 0)
@@ -141,7 +141,7 @@ class User {
 
   updateProfile(name, email, phone) {
     return new Promise((resolve, reject) => {
-      const sql = `UPDATE user SET name = ?, email = ?, phone = ? WHERE id = ?`;
+      const sql = `UPDATE users SET name = ?, email = ?, phone = ? WHERE id = ?`;
       db.query(sql, [name, email, phone, this.id], (err, res) => {
         if (err) return reject(err);
         else if (res.affectedRows === 0)

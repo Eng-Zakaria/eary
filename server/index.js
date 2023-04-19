@@ -12,7 +12,7 @@ const authRouter = require("./routes/authRouter");
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 
-const port = 4003;
+const port = 4000;
 app.listen(port, "localhost", () => {
   console.log(`Server is running on port ${port}`);
 });

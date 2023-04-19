@@ -5,7 +5,7 @@ const User = require("./user");
 class AuthModel {
   static async authenticateUser(email, password) {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM user WHERE email = "${email}"`, (err, res) => {
+      db.query(`SELECT * FROM users WHERE email = "${email}"`, (err, res) => {
         if (err) return reject(err);
         else {
           if (res.length > 0) {
@@ -48,7 +48,7 @@ class AuthModel {
     return new Promise((resolve, reject) => {
       const token = crypto.randomBytes(16).toString("hex");
       db.query(
-        `UPDATE user SET token = "${token}" WHERE id = ${id}`,
+        `UPDATE users SET token = "${token}" WHERE id = ${id}`,
         (err, res) => {
           if (err) return reject(err);
           else return resolve(token);
@@ -58,7 +58,7 @@ class AuthModel {
   }
   static async deleteToken(id) {
     return new Promise((resolve, reject) => {
-      db.query(`UPDATE user SET token = NULL WHERE id = ${id}`, (err, res) => {
+      db.query(`UPDATE users SET token = NULL WHERE id = ${id}`, (err, res) => {
         if (err) return reject(err);
         else return resolve("Logged out successfully");
       });
@@ -66,7 +66,7 @@ class AuthModel {
   }
   static async getUserByToken(token) {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM user WHERE token = "${token}"`, (err, res) => {
+      db.query(`SELECT * FROM users WHERE token = "${token}"`, (err, res) => {
         if (err) return reject(err);
         else {
           if (res.length > 0) {
@@ -84,7 +84,7 @@ class AuthModel {
   }
   static async logout(id) {
     return new Promise((resolve, reject) => {
-      db.query(`UPDATE user SET token = NULL WHERE id = ${id}`, (err, res) => {
+      db.query(`UPDATE users SET token = NULL WHERE id = ${id}`, (err, res) => {
         if (err) return reject(err);
         else return resolve("Logged out successfully");
       });

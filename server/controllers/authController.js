@@ -7,8 +7,7 @@ class AuthController {
     const { email, password } = req.body;
     try {
       const user = await authModel.authenticateUser(email, password);
-      const token = await authModel.createToken(user.id);
-      res.status(200).json(`Logged in successfully, token: ${token}`);
+      res.status(200).json(user);
     } catch (err) {
       res.status(400).json({ error: "Invalid credentials" });
     }
@@ -20,7 +19,7 @@ class AuthController {
       email,
       password,
       phone,
-      status = "active",
+      status = "inactive",
       role = "0",
     } = req.body;
     try {
