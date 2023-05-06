@@ -38,12 +38,15 @@ class AuthModel {
                 return reject("Incorrect password");
               }
             });
+          } else {
+           
+            return reject("Email not found");
           }
         }
       });
     });
   }
-
+  
   static async createToken(id) {
     return new Promise((resolve, reject) => {
       const token = crypto.randomBytes(16).toString("hex");

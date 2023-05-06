@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Card } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { Card } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
+import { getAuthUser } from "../../../helper/Storage";
 
 const ViewUser = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
+  const auth = getAuthUser();
 
   useEffect(() => {
     axios
-      .get(`//localhost:3333/users/${id}`)
+      .get(`//localhost:4000/users/${id}`, {
+        headers: {
+          token: auth.token,
+        },
+      })
       .then((res) => setUser(res.data))
       .catch((err) => console.log(err));
   }, [id]);
@@ -19,15 +25,24 @@ const ViewUser = () => {
   }
 
   return (
-    <div style={{ marginTop: "100px" }}>
-      <h2>View User</h2>
-      <Card>
+    <div style={{ marginTop: "100px"  , width:"40%"}}>
+      <h2 style={{ marginBottom: "30px" }}>View User</h2>
+      <Card style={{ backgroundColor: "#f5f5f5", borderRadius: "10px" }}>
         <Card.Body>
-          <Card.Title>{user.username}</Card.Title>
-          <Card.Subtitle className="mb-2 text-muted">
-            {user.email}
+         
+          <Card.Title style={{ fontSize: "24px", fontWeight: "bold" }}> <p>
+              <strong>name:</strong> {user.name}
+            </p></Card.Title>
+          <Card.Subtitle
+            className="mb-2 text-muted"
+            style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "10px" }}
+          >
+            
           </Card.Subtitle>
-          <Card.Text>
+          <Card.Text style={{ fontSize: "18px" }}>
+          <p style={{ fontSize: "18px" }}>
+              <strong style={{ fontSize: "20px" }}>email:</strong> {user.email}
+            </p>
             <p>
               <strong>ID:</strong> {user.id}
             </p>
@@ -35,19 +50,27 @@ const ViewUser = () => {
               <strong>Role:</strong> {user.role}
             </p>
             <p>
-              <strong>Status:</strong> {user.status ? "Active" : "Inactive"}
+              <strong>Status:</strong> {user.status ? "0" : "1"}
             </p>
           </Card.Text>
-          <Button
-            href={`/update-user/${user.id}`}
-            variant="warning"
-            className="mr-2"
-          >
-            Update
-          </Button>
-          <Button href="/get-all-users" variant="secondary">
-            Back
-          </Button>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Link
+              to={`/manage-user/update/${user.id}`}
+              variant="warning"
+              className="btn btn-warning mr-2"
+              style={{ fontWeight: "bold" }}
+            >
+              Update
+            </Link>
+            <Link
+              to="/manage-user"
+              className="btn btn-secondary"
+              variant="secondary"
+              style={{ fontWeight: "bold" }}
+            >
+              Back
+            </Link>
+          </div>
         </Card.Body>
       </Card>
     </div>

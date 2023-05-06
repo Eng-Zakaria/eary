@@ -5,6 +5,8 @@ import Navbar from "react-bootstrap/Navbar";
 import logo from "../assets/logo.jpg";
 import { getAuthUser, removeAuthUser } from "../helper/Storage";
 import { Link, useNavigate } from "react-router-dom";
+import { Image } from "react-bootstrap";
+import img from '../assets/avtarlogo.jpg'
 const Header = () => {
   const navigate = useNavigate();
   const auth = getAuthUser();
@@ -63,10 +65,29 @@ const Header = () => {
             
             </>
           )}
-          
+        
            
-            {auth && <Nav.Link onClick={Logout}>Logout</Nav.Link>}
+            {auth &&(
+       <>
+            <Nav.Link onClick={Logout}>Logout</Nav.Link>
+            <Link to={`update-profile/${auth.id }`} className="btn btn-outline-light me-2">
+            <Image
+            src={img}
+            alt="User Avatar"
+            roundedCircle
+            width="20"
+            height="20"
+            className="me-1"
+          />
+        Update Profile
+      </Link>
+
+      </>
+            )
+            }
           </Nav>
+        
+    
         </Container>
       </Navbar>
     </div>

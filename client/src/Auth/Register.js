@@ -5,7 +5,7 @@ import Alert from "react-bootstrap/Alert";
 import axios from "axios";
 import { setAuthUser } from "../helper/Storage";
 import { useNavigate } from "react-router-dom";
-
+import "./register.css"
 const Register = () => {
   const navigate = useNavigate();
   const [register, setRegister] = useState({
@@ -14,12 +14,11 @@ const Register = () => {
     name: "",
     phone: "",
     loading: false,
-    err: [],
   });
-
+  const [error, setError] = useState(null);
   const RegisterFun = (e) => {
     e.preventDefault();
-    setRegister({ ...register, loading: true, err: [] });
+    setRegister({ ...register, loading: true });
     axios
       .post("http://localhost:4000/auth/register", {
         email: register.email,
@@ -28,15 +27,15 @@ const Register = () => {
         phone: register.phone,
       })
       .then((resp) => {
-        setRegister({ ...register, loading: false, err: [] });
+        setRegister({ ...register, loading: false});
         //setAuthUser(resp.data);
         navigate("/");
       })
-      .catch((errors) => {
+      .catch((error) => {
+        setError(error.response.data.error);
         setRegister({
           ...register,
           loading: false,
-          err: errors.response.data.errors,
         });
       });
   };
@@ -45,11 +44,13 @@ const Register = () => {
     <div className="login-container">
       <h1>Registration Form</h1>
 
-      {register.err.map((error, index) => (
-        <Alert key={index} variant="danger" className="p-2">
-          {error.msg}
-        </Alert>
-      ))}
+      {error && (
+  <Alert variant="danger" className="p-2">
+    {error}
+  </Alert>
+      )
+}
+
 
       <Form onSubmit={RegisterFun}>
         <Form.Group className="mb-3">

@@ -15,7 +15,7 @@ class userController {
         email,
         password,
         phone,
-        status = "active",
+        status = 0,
         role = "0",
       } = req.body;
       const user = await User.createUser(
@@ -87,6 +87,18 @@ class userController {
       user.email = email || user.email;
       user.password = password || user.password;
       user.phone = phone || user.phone;
+      await user.update();
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+  static async updateStatus(req, res) {
+    const { id } = req.params;
+    const { status } = req.body;
+    try {
+      const user = await User.getUserById(id);
+      user.status = status || user.status;
       await user.update();
       res.status(200).json(user);
     } catch (err) {

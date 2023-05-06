@@ -19,7 +19,7 @@ class AuthController {
       email,
       password,
       phone,
-      status = "inactive",
+      status = 0,
       role = "0",
     } = req.body;
     try {

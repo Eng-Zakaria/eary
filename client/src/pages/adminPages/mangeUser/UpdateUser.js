@@ -1,111 +1,96 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import './style/updateuser.css'
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import { getAuthUser } from "../../../helper/Storage";
+
+
 const UpdateUser = () => {
   const navigate = useNavigate();
+  const auth = getAuthUser();
   console.log(useParams());
   const { id } = useParams();
   const [user, setUser] = useState(null);
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState("");
   useEffect(() => {
     axios
-      .get(`http://localhost:3333/users/${id}`)
+      .get(`http://localhost:4000/users/${id}`, {
+        headers: {
+          token: auth.token,
+        },
+      })
       .then((res) => {
         setUser(res.data);
-        setUsername(res.data.username);
+        setName(res.data.name);
         setEmail(res.data.email);
-        setPassword(res.data.password);
+        setPhone(res.data.phone);
         setRole(res.data.role);
         setStatus(res.data.status);
       })
       .catch((err) => console.log(err));
   }, [id]);
+  
   const handelSubmit = (e) => {
     e.preventDefault();
     const data = {
-      username: username,
+      name: name,
       email: email,
-      password: password,
+      phone: phone,
       role: role,
       status: status,
     };
     axios
-      .put(`http://localhost:3333/users/${id}`, data)
+      .put(`http://localhost:4000/users/${id}`,{ ...data }, {
+        headers: {
+          token: auth.token,
+        },
+      })
       .then((res) => {
         alert("User updated successfully");
-        navigate("/user");
+        navigate("/manage-user");
       })
       .catch((err) => console.log(err));
   };
   return (
-    <>
-      <div style={{ marginTop: "100px" }}>
-        <h1>Update User</h1>
-        <form onSubmit={handelSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              className="form-control"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="role">Role</label>
-            <select
-              className="form-control"
-              id="role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="normal">Normal User</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor="status">Status</label>
-            <select
-              className="form-control"
-              id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Submit
-          </button>
-        </form>
-      </div>
-    </>
+    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh"}}>
+    <Form onSubmit={handelSubmit}>
+      <Form.Group>
+        <Form.Label>Username</Form.Label>
+        <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>Email</Form.Label>
+        <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>phone</Form.Label>
+        <Form.Control type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>Role</Form.Label>
+        <Form.Control as="select" value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="0">Normal User</option>
+          <option value="1">Admin</option>
+        </Form.Control>
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>Status</Form.Label>
+        <Form.Control as="select" value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+        </Form.Control>
+      </Form.Group>
+      <Button variant="primary" type="submit">Submit</Button>
+    </Form>
+  </Container>
+  
   );
 };
 

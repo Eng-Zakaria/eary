@@ -1,48 +1,60 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import "./style/adduser.css";
+import { getAuthUser } from "../../../helper/Storage";
+
 const AddUser = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("normal");
   const [status, setStatus] = useState("active");
+  const auth = getAuthUser();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = {
-      username: username,
+      name: name,
+      phone: phone,
       password: password,
       role: role,
       email: email,
       status: status,
     };
     axios
-      .post("http://localhost:3333/users", data)
+      .post("http://localhost:4000/users", { ...data }, {
+        headers: {
+          token: auth.token,
+        },
+      })
       .then((res) => {
         alert("User created successfully");
-        setUsername("");
+        setName("");
+        setPhone("");
+        setEmail("");
         setPassword("");
         setRole("normal");
         setStatus("active");
-        navigate("/user");
+        navigate("/manage-user");
       })
       .catch((err) => console.log(err));
   };
 
   return (
-    <div>
-      <div style={{ marginTop: "100px" }}>
+    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+      <div className="add-user-container">
         <h2>Create User</h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formUsername">
             <Form.Label>Username</Form.Label>
             <Form.Control
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </Form.Group>
           <Form.Group controlId="formEmail">
@@ -53,10 +65,18 @@ const AddUser = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
+          <Form.Group controlId="formPhone">
+            <Form.Label>Phone</Form.Label>
+            <Form.Control
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </Form.Group>
           <Form.Group controlId="formPassword">
             <Form.Label>Password</Form.Label>
             <Form.Control
-              type="password"
+              type="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -68,8 +88,8 @@ const AddUser = () => {
               value={role}
               onChange={(e) => setRole(e.target.value)}
             >
-              <option value="normal">Normal User</option>
-              <option value="admin">Admin</option>
+              <option value="0">Normal User</option>
+              <option value="1">Admin</option>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="formStatus">
@@ -79,8 +99,8 @@ const AddUser = () => {
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
             </Form.Control>
           </Form.Group>
           <Button variant="primary" type="submit">
@@ -88,7 +108,7 @@ const AddUser = () => {
           </Button>
         </Form>
       </div>
-    </div>
+    </Container>
   );
 };
 

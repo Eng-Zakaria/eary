@@ -8,7 +8,7 @@ class User {
     this.email = email;
     this.password = password;
     this.phone = phone;
-    this.status = status || "inactive";
+    this.status = status || 0;
     this.role = role || "0";
     this.token = token;
   }
@@ -106,27 +106,18 @@ class User {
   update() {
     return new Promise((resolve, reject) => {
       const sql = `UPDATE users SET name = ?, email = ?, password = ?, phone = ?, status = ?, role = ?, token = ? WHERE id = ?`;
-      db.query(
-        sql,
-        [
-          this.name,
-          this.email,
-          this.password,
-          this.phone,
-          this.status,
-          this.role,
-          this.token,
-          this.id,
-        ],
-        (err, res) => {
-          if (err) return reject(err);
-          else if (res.affectedRows === 0)
-            return reject(new Error(`User ${this.id} not found`));
-          else return resolve(this);
+      db.query(sql, [this.name, this.email, this.password, this.phone, this.status, this.role, this.token, this.id], (err, res) => {
+        if (err) {
+          reject(err);
+        } else if (res.affectedRows === 0) {
+          reject(new Error(`User ${this.id} not found`));
+        } else {
+          resolve(this);
         }
-      );
+      });
     });
   }
+  
   delete() {
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM users WHERE id = ?`;
@@ -149,6 +140,16 @@ class User {
         else return resolve(this);
       });
     });
+  }
+  static async updateStatus(id, status) {
+    try {
+      const user = await User.getUserById(id);
+      user.status = status;
+      await user.update();
+      return user;
+    } catch (err) {
+      throw err;
+    }
   }
 }
 
