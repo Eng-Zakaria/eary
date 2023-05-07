@@ -1,0 +1,298 @@
+const MySql = require('./db');
+const AnswersDB = require('./answers-db');
+const { log } = require('console');
+
+module.exports = class QuestionDB extends AnswersDB {
+        constructor() {
+            if (this instanceof QuestionDB) {
+                throw new Error('A static class cannot be instantiated');
+            }
+        }
+        static async savaQuestions(questions = []) {
+            let keysAndColumnsWithoutAnswers = ['id_exam', 'type', 'header', 'description',
+                'state', 'rank', 'file_path', 'icon_path', 'default_point'
+            ];
+            let finalResult = {};
+            const resultQues = await MySql.bulkInsert('questions', questions, keysAndColumnsWithoutAnswers, keysAndColumnsWithoutAnswers);
+            finalResult = {
+                'questionsInsertIdFrom': resultQues[0],
+                'addedRows': resultQues[1]
+            }
+            const savingAnswersResult = await QuestionDB.saveAnswers(questions, resultQues[0]);
+            finalResult['savingAnswersResult'] = savingAnswersResult;
+            return finalResult;
+        }
+        static async validActivatedExam(examId) {
+            try {
+                const valid = await MySql.checkState('exams', 'exam_id', examId, 'state', 'ACTIVITED');
+                return valid;
+            } catch (error) {
+                return false;
+            }
+        }
+        static async validQuestion(examId, questionId) {
+            try {
+                const result = await MySql.validForeignKey('questions', 'question_id', questionId, 'id_exam', examId);
+                return result;
+            } catch (error) {
+                return false;
+            }
+        }
+        static async isActivatedQuestion(questionId) {
+            try {
+                const valid = await MySql.checkState('questions', 'question_id', questionId, 'state', 1);
+                return valid;
+            } catch (error) {
+                return false;
+            }
+        }
+        static async getStatesQuestionsWithCorrectAnswers(examId, state) {
+            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"' ,']')AS answers
+        from questions JOIN answers ON  questions.id_exam = ? AND questions.state = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId, state]);
+            return this.prettyAnswers(result);
+        }
+
+        static async getStatesQuestionsWithoutCorrectAnswers(examId, state) {
+            const valid = await this.validActivatedExam(examId);
+            console.log(valid);
+
+            if (!valid) throw new Error(`ACCESS DENIED`);
+
+            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',']')AS answers
+        from questions JOIN answers ON  questions.id_exam = ? AND questions.state = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId, state]);
+            return this.prettyAnswers(result);
+
+        }
+
+
+        static async getQuestionsWithCorrectAnswers(examId) {
+            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"' ,']')AS answers
+        from questions JOIN answers ON  questions.id_exam = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId]);
+            return this.prettyAnswers(result);
+        }
+        
+        static async getQuestionsWithoutCorrectAnswers(examId, state) {
+            const valid = await this.validActivatedExam(examId);
+            if (!valid) throw new Error(`ACCESS DENIED`);
+
+            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',']')AS answers
+        from questions JOIN answers ON  questions.id_exam = ? AND questions.state = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId, state]);
+            return this.prettyAnswers(result);
+        }
+        static async getJustQuestionWithCorrectAnswers(examId, questionId) {
+            const valid = this.validQuestion(examId, questionId);
+            if (!valid) throw new Error('NOT VALID');
+
+            let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"',']') AS answers
+         FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
+            const [result] = await MySql.pool.query(command, [examId, questionId]);
+            return this.prettyAnswers(result[0]);
+        }
+        static async prettyAnswers(questions) {
+
+            for (const question of questions) {
+                delete question['id_question'];
+                delete question['answer'];
+                delete question['answer_index'];
+                delete question['point'];
+                delete question['is_correct'];
+                delete question['modified_at'];
+                question['answers'] = "[" + question.answers + "]";
+                question['answers'] = JSON.parse(question['answers']);
+
+            }
+            return questions;
+        }
+        static async validQuestionToView(examId, questionId) {
+            let valid = await this.validActivatedExam(examId);
+
+            if (!valid) throw new Error(`ACCESS DENIED`);
+
+            valid = await this.validQuestion(examId, questionId);
+            if (!valid) throw new Error('NOT VALID');
+            valid = await this.isActivatedQuestion(questionId);
+
+            if (!valid) throw new Error('NOT ACTIVATED');
+            return true;
+        }
+        static async getJustQuestionWithoutCorrectAnswers(examId, questionId) {
+            try {
+                const valid = await this.validQuestionToView(examId, questionId);
+                console.log(valid);
+                if (!valid) return {};
+                let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',']') AS answers
+         FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
+                const [result] = await MySql.pool.query(command, [examId, questionId]);
+                const question = this.prettyAnswers(result);
+                return question;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        static async updateQuestions(examId, questions) {
+            let finalResult = {};
+            for (const question of questions) {
+                const questionId = QuestionDB.processQuestionData(question);
+
+                finalResult[questionId] = finalResult[questionId] || [];
+
+                await QuestionDB.updateAnswersWithQuestion(examId, questionId, question, finalResult);
+
+                let keysAndColumns = Object.keys(question);
+
+                const result = {};
+                result[examId] = await MySql.update('questions', question, keysAndColumns, keysAndColumns, `question_id = ${questionId} AND id_exam = ${examId} `)
+
+                finalResult[questionId].push(result);
+            }
+            return finalResult;
+        }
+
+        static async deleteQuestion(examId, questionIds) {
+            const result = await MySql.deleteByArr('questions', `id_exam = ${examId}`, 'question_id', questionIds);
+            return result;
+        }
+        static processQuestionData(question) {
+            const questionId = question.question_id || question.id;
+            const examId = question.id_exam || question.examId;
+            delete question.question_id;
+            delete question.id;
+            delete question.exam_id;
+            delete question.id_exam;
+            delete question.examId;
+            return questionId;
+        }
+        static async updateAnswersWithQuestion(exam_id, questionId, question, finalResult) {
+            if (question.answers) {
+                let resultAnswers = await QuestionDB.updateAnswers(exam_id, questionId, question.answers);
+                finalResult[questionId].push({
+                    answers: resultAnswers
+                });
+                delete question.answers;
+            } else {
+                finalResult[questionId].push({ answers: {} });
+            }
+        }
+
+    }
+    /*
+    let questions = [{
+            'question_id': 8,
+            'id_exam': 2,
+            'type': 'MCQ-Single888',
+            'header': 'what did888 you expect ?',
+            'description': 'here i8888t is what it is',
+            'state': 'ACTIVE',
+            'rank': 8,
+            'file_path': '.mp3',
+            'icon_path': '.img',
+            'default_point': 55,
+            'answers': [{
+                'answer': 'm8',
+                'is_correct': 0,
+                'point': 888
+            }, {
+
+                'answer': 'mmmmmmmmm88mmmmmmmm',
+                'is_correct': 0,
+                'point': 88
+            }, {
+
+                'answer': 'mmm88mm',
+                'is_correct': 1,
+                'point': 123
+            }],
+
+        },
+        {
+            'question_id': 11,
+            'id_exam': 3,
+            'type': 'MCQ_SINGLE 11',
+            'header': 'what did you expect from that point ? 11',
+            'description': '11focus on the target to get the correct answers',
+            'state': 'ACTIVE',
+            'rank': 2,
+            'file_path': 'a1.mp3',
+            'icon_path': 'c111.img',
+            'default_point': 9311,
+            'answers': [{
+
+                'answer': 'm1111111111111',
+                'is_correct': 1,
+                'point': 123
+            }, {
+
+                'answer': 'mmmmmmmmmmmmmm1111111111mmm',
+                'is_correct': 1,
+                'point': 123
+            }, {
+                'answer': '1111111111mm11mmm',
+                'is_correct': 1,
+                'point': 123
+            }],
+
+        },
+    ]
+    let questionUpdate = [{
+            // q_id = 
+            question_id: 11,
+            type: '1111111111MC1111QMCQMCQ',
+            header: 'its11 new head',
+            answers: {
+                1: {
+                    answer: 'new11 answer',
+                    is_correct: false,
+                    point: 999
+                },
+                2: {
+                    answer: 'new a11nswer2 index 2',
+                    is_correct: false,
+                    point: 11
+                }
+            }
+        }, {
+            question_id: 9,
+            type: 'MCQMCQMCQ9',
+            header: 'its new head9',
+            description: 'new dec 9',
+            answers: {
+                1: {
+                    answer: 'new answer9',
+                    is_correct: false,
+                    point: 999
+                },
+                2: {
+                    answer: 'new answer2999999 index 2',
+                    is_correct: false,
+                    point: 888
+                },
+                3: {
+                    answer: 'new 3',
+                    is_correct: 1,
+                    point: 1231
+                }
+            }
+        }
+
+
+    ]
+    let test = async() => {
+        //  const result1 = await QuestionDB.getJustQuestionWithCorrectAnswers(2, 3);
+        // const result2 = await QuestionDB.getAnswersWithCorrectAnswer(1);
+        // await QuestionDB.getAnswersWithoutCorrectAnswer(1);
+        // const result3 = await QuestionDB.deleteQuestion(2, [6, 7]);
+        const result4 = await QuestionDB.updateQuestions(2, questionUpdate);
+        return result4;
+    }
+    let test2 = async() => {
+        const result4 = await test();
+
+        console.log(JSON.stringify(result4));
+
+    }
+
+
+    console.time();
+    test2();
+    console.timeEnd();*/
