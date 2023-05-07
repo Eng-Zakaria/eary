@@ -8,23 +8,54 @@ const QuestionDB = require('../../db-model/question-db');
 
 // don't forget you have to set the id admin when you validate in db by just one quick line
 //                                               req.body.adminId = id(FROM DB)
+
 manageExamRouter.route("/")
     .all((req, res, nxt) => {
         console.log('in manage');
         nxt();
-    })      
+    })
+
     .post(async(req, res) => {
-        //                                      replace with after edit req.body.adminId`
+        //                                      replace with after edit req.body.adminId`   
         const result = await ExamDB.saveExams(req.userId, req.body);
         res.status(200).send(result);
-    })
-    .get(async(req, res) => {
-        // pay your intention here you have to enter the id of id creator before we go 
+    }).get(async(req, res) => {
+        console.log("here in deeeepepeee");
+        // pay your intention here you have to enter the id of id creator before we go
+        try {
+            const questions = await ExamDB.getExamsForCreator(req.userId);
 
-        const questions = await ExamDB.getExamsForCreator();
-        res.status(200).json(questions);
+            res.status(200).json(questions);
+        } catch (err) {
+            res.status(500).json({ "msg": "error in get all exams for creator" });
+        }
     })
-module.exports = manageExamRouter;
+    module.exports = manageExamRouter;
+
+// manageExamRouter.route("/")
+//     .all((req, res, nxt) => {
+//         console.log('in manage');
+//         nxt();
+//     })
+    
+//     .post(async(req, res) => {
+//         //                                      replace with after edit req.body.adminId`
+        
+//         const result = await ExamDB.saveExams(req.creatorId, req.body);
+
+//         res.status(200).send(result);
+ 
+//     }).get(async(req, res) => {
+//         // pay your intention here you have to enter the id of id creator before we go 
+//         try{
+//         const questions = await ExamDB.getExamsForCreator(req.creatorId);
+//         res.status(200).json({questions,"msg":"get all exams for creator"});
+//         }
+//         catch(err){
+//             res.status(500).json({"msg":"error in get all exams for creator"});
+//         }
+//     })
+// module.exports = manageExamRouter;
 /*
 manageExamRouter.route(":id")
     .all((req, res, nxt) => {

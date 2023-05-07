@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ExamDetails.css';
+import './style/ExamDetails.css';
 
 const ExamDetails = ({ match, history }) => {
   const [exam, setExam] = useState(null);

@@ -11,8 +11,8 @@ const authRouter = require("./routes/authRouter");
 const examsAppRouter = require("./routes/exam-routes/route-application");
 const examsManageRouter = require("./routes/exam-routes/router-manage");
 const admin = require("./middleware/admin");
-
 app.use("/api/exams", examsAppRouter);
+app.use("/api/exams/manage",admin, examsManageRouter);
 app.use("/api/exams/manage",admin, examsManageRouter);
 
 app.use("/users", userRouter);

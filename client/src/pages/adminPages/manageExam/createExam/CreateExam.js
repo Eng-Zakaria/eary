@@ -1,134 +1,134 @@
-import React, { useState } from 'react';
-import ExamHeader from './ExamHeader';
-import Question from './Question';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import './style/exam.css'
+import { useState } from 'react';
+import axios from 'axios';
+import { getAuthUser } from '../../../../helper/Storage';
+import { useNavigate } from 'react-router-dom';
 
-function CreateExam() {
-  const [name, setName] = useState();
-  const [difficulty, setDifficulty] = useState('Easy');
-  const [duration, setDuration] = useState(0);
-  const [questions, setQuestions] = useState([]);
-  const [passingScore, setPassingScore] = useState();
-
-  const handleAddQuestion = () => {
-    const newQuestion = {
-      title: 'New Question',
-      audioFile: null,
-      choices: [],
-    };
-    setQuestions([...questions, newQuestion]);
+const CreateExam = () => {
+  const auth = getAuthUser();
+  const [header, setHeader] = useState('');
+  const [description, setDescription] = useState('');
+  const [duration, setDuration] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [totalScore, setTotalScore] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigate();
+  const handleHeaderChange = (event) => {
+    setHeader(event.target.value);
   };
 
-  const handleQuestionChange = (index, updatedQuestion) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index] = updatedQuestion;
-    setQuestions(updatedQuestions);
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
   };
 
-  const handleQuestionDelete = (index) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions.splice(index, 1);
-    setQuestions(updatedQuestions);
+  const handleDurationChange = (event) => {
+    setDuration(event.target.value);
   };
 
-  const handleSave = () => {
-    // Validate exam data
-    if (!name || name.trim() === '') {
-      alert('Please enter a name for the exam');
-      return;
-    }
-    if (!duration || duration <= 0) {
-      alert('Please enter a valid duration for the exam');
-      return;
-    }
-    if (!passingScore || passingScore <= 0) {
-      alert('Please enter a valid passing score for the exam');
-      return;
-    }
-    if (questions.length === 0) {
-      alert('Please add at least one question to the exam');
-      return;
-    }
-    for (const question of questions) {
-      if (!question.title || question.title.trim() === '') {
-        alert('Please enter a title for all questions');
-        return;
-      }
-      if (!question.choices || question.choices.length < 2) {
-        alert('Please add at least two choices to all questions');
-        return;
-      }
-      if (!question.answer || question.answer.trim() === '') {
-        alert('Please select an answer for all questions');
-        return;
-      }
-    }
+  const handleDifficultyChange = (event) => {
+    setDifficulty(event.target.value);
+  };
+
+  const handleTotalScoreChange = (event) => {
+    setTotalScore(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setErrorMessage('');
+    setSuccessMessage('');
   
-    // Construct exam data
-    const exam = {
-      name,
-      difficulty,
-      duration,
-      passingScore,
-      questions,
-    };
+    try {
+      const examData = [
+        {
+          header,
+          description,
+          duration_mins: duration,
+          difficultly: difficulty,
+          total_score: totalScore,
+        },
+      ];
   
-    // Send POST request to server
-    fetch('/3000/exams', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(exam),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data);
-        alert('Exam saved successfully');
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('There was an error saving the exam');
+      const response = await axios.post('http://localhost:4000/api/exams/manage', examData, {
+        headers: {
+          token: auth.token,
+        },
       });
-  };
   
+      setSuccessMessage(response.data.message);
+      setHeader('');
+      setDescription('');
+      setDuration('');
+      setDifficulty('');
+      setTotalScore('');
+      navigate('/manage-exam');
+    } catch (error) {
+      setErrorMessage(error.response.data.message);
+    }
+  };
+
   return (
-    <div className="exam-container">
-      <ExamHeader
-        name={name}
-        difficulty={difficulty}
-        duration={duration}
-        passingScore={passingScore}
-        setName={setName}
-        setDifficulty={setDifficulty}
-        setDuration={setDuration}
-        setPassingScore={setPassingScore}
-        onSave={handleSave}
-      />
-      <div className="questions-container">
-        {questions.map((question, index) => (
-          <Question
-            key={index}
-            index={index}
-            question={question}
-            onQuestionChange={handleQuestionChange}
-            onDeleteQuestion={() => handleQuestionDelete(index)}
+    <div className="container my-4">
+      <h1 className="text-center mb-4">Create Exam</h1>
+      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="title" className="form-label">Title:</label>
+          <input
+            type="text"
+            id="title"
+            className="form-control"
+            value={header}
+            onChange={handleHeaderChange}
+            required
           />
-        ))}
-      </div>
-      <button className="add-question-button" onClick={handleAddQuestion}>
-        <FontAwesomeIcon icon={faPlus} />
-        Add Question
-      </button>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">Description:</label>
+          <textarea
+            id="description"
+            className="form-control"
+            value={description}
+            onChange={handleDescriptionChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="duration" className="form-label">Duration (in minutes):</label>
+          <input
+            type="number"
+            id="duration"
+            className="form-control"
+            value={duration}
+            onChange={handleDurationChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="difficulty" className="form-label">Difficulty:</label>
+          <select id="difficulty" className="form-select" value={difficulty} onChange={handleDifficultyChange} required>
+            <option value="">Select difficulty level</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="totalScore" className="form-label">Total Score:</label>
+          <input
+            type="number"
+            id="totalScore"
+            className="form-control"
+            value={totalScore}
+            onChange={handleTotalScoreChange}
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary">Create Exam</button>
+      </form>
     </div>
   );
-}
+};
 
 export default CreateExam;
