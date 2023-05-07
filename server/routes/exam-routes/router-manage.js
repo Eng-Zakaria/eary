@@ -17,13 +17,13 @@ manageExamRouter.route("/")
 
     .post(async(req, res) => {
         //                                      replace with after edit req.body.adminId`   
-        const result = await ExamDB.saveExams(req.creatorId, req.body);
+        const result = await ExamDB.saveExams(req.userId, req.body);
         res.status(200).send(result);
     }).get(async(req, res) => {
         console.log("here in deeeepepeee");
         // pay your intention here you have to enter the id of id creator before we go
         try {
-            const questions = await ExamDB.getExamsForCreator(req.creatorId);
+            const questions = await ExamDB.getExamsForCreator(req.userId);
 
             res.status(200).json(questions);
         } catch (err) {

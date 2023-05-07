@@ -16,9 +16,9 @@ appExamRouter.route("/").get(async(req, res) => {
 
 appExamRouter.get("/", async(req, res) => {
     try {
-        console.log(req.creatorId);
+        
  console.log("here in deeeepepeee");
-        const questionsWithAnswers = await QuestionDB.getStatesQuestionsWithoutCorrectAnswers(req.creatorId, 1);
+        const questionsWithAnswers = await QuestionDB.getStatesQuestionsWithoutCorrectAnswers(req.userId, 1);
 
         res.status(200).json(questionsWithAnswers);
     } catch (error) {

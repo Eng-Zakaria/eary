@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { getAuthUser } from '../../../../helper/Storage';
+import { useNavigate } from 'react-router-dom';
 
 const CreateExam = () => {
   const auth = getAuthUser();
@@ -11,7 +12,7 @@ const CreateExam = () => {
   const [totalScore, setTotalScore] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-
+  const navigate = useNavigate();
   const handleHeaderChange = (event) => {
     setHeader(event.target.value);
   };
@@ -60,6 +61,7 @@ const CreateExam = () => {
       setDuration('');
       setDifficulty('');
       setTotalScore('');
+      navigate('/manage-exam');
     } catch (error) {
       setErrorMessage(error.response.data.message);
     }
