@@ -12,13 +12,14 @@ manageExamRouter.route("/")
     .all((req, res, nxt) => {
         console.log('in manage');
         nxt();
-    })
+    })      
     .post(async(req, res) => {
         //                                      replace with after edit req.body.adminId`
         const result = await ExamDB.saveExams(req.userId, req.body);
         res.status(200).send(result);
     })
 manageExamRouter.post("/:CreatorId", async (req,res) =>{
+    
     const result = await ExamDB.saveExams(req.params.idCreator, req.body);
     res.status(200).send(result);
 })
