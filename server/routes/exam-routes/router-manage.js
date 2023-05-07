@@ -18,11 +18,12 @@ manageExamRouter.route("/")
         const result = await ExamDB.saveExams(req.userId, req.body);
         res.status(200).send(result);
     })
-manageExamRouter.post("/:CreatorId", async (req,res) =>{
-    
-    const result = await ExamDB.saveExams(req.params.idCreator, req.body);
-    res.status(200).send(result);
-})
+    .get(async(req, res) => {
+        // pay your intention here you have to enter the id of id creator before we go 
+
+        const questions = await ExamDB.getExamsForCreator();
+        res.status(200).json(questions);
+    })
 module.exports = manageExamRouter;
 /*
 manageExamRouter.route(":id")
