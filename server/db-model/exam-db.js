@@ -74,12 +74,16 @@ module.exports = class ExamDB {
             return result;
         }
         static async getExamsForCreator(creatorId, states, exceptStates) {
+            console.log(creatorId);
             let command = `SELECT * FROM exams WHERE id_creator = ?`;
+           
             if (states || exceptStates) {
                 let result = await ExamDB.getStateExams(states, exceptStates, command, creatorId);
+               
                 return result;
             } else {
                 const [result] = await MySql.pool.query(command, [creatorId])
+                console.log(result);
                 return result;
             }
 

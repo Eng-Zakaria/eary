@@ -14,11 +14,11 @@ appExamRouter.route("/").get(async(req, res) => {
     res.status(200).json(exams);
 })
 
-appExamRouter.get("/:examId", async(req, res) => {
+appExamRouter.get("/", async(req, res) => {
     try {
         console.log(req.params.examId);
-
-        const questionsWithAnswers = await QuestionDB.getStatesQuestionsWithoutCorrectAnswers(req.params.examId, 1);
+ console.log("here in deeeepepeee");
+        const questionsWithAnswers = await QuestionDB.getStatesQuestionsWithoutCorrectAnswers(req.crecreatorId, 1);
 
         res.status(200).json(questionsWithAnswers);
     } catch (error) {

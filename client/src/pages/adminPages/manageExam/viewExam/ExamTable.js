@@ -2,15 +2,22 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './ExamTable.css';
+import { getAuthUser } from '../../../../helper/Storage';
 
 const ExamTable = () => {
   // Define exam data as an array of objects
+  const auth = getAuthUser();
   const [exams, setExams] = useState([]);
 
   // Use the useEffect hook to fetch exam data from the server
   useEffect(() => {
-    axios.get('/api/exams').then(response => {
+    axios.get('http://localhost:4000/api/exams/manage',{
+      headers: {
+        token: auth.token,
+      },
+    }).then(response => {
       setExams(response.data);
+      console.log(response.data);
     }).catch(error => {
       console.error('Error fetching exam data:', error);
     });
@@ -31,25 +38,23 @@ const ExamTable = () => {
             <th>Name</th>
             <th>Difficulty</th>
             <th>Duration</th>
-            <th>Avg Score</th>
-            <th>Highest Score</th>
-            <th>No Participants</th>
+            <th>description</th>
+            <th> state</th>
+            <th>created_at</th>
           </tr>
         </thead>
         <tbody>
-          {exams.map((exam, index) => (
-            <Link key={index} to={`/${exam.name}`}>
-              <tr>
-                <td>{exam.name}</td>
-                <td>{exam.difficulty}</td>
-                <td>{exam.duration}</td>
-                <td>{exam.avgScore}</td>
-                <td>{exam.highestScore}</td>
-                <td>{exam.noParticipants}</td>
-              </tr>
-            </Link>
-          ))}
-        </tbody>
+  {exams.map((exam, index) => (
+    <tr key={index}>
+      <td><Link to={`/manage-exam/${exam.exam_id}`}>{exam.header}</Link></td>
+      <td>{exam.difficultly}</td>
+      <td>{exam.duration_mins}</td>
+      <td>{exam.description}</td>
+      <td>{exam.state}</td>
+      <td>{exam.created_at}</td>
+    </tr>
+  ))}
+</tbody>
       </table>
     </div>
   );

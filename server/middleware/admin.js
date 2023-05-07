@@ -5,10 +5,12 @@ const admin = async (req, res, next) => {
   const { token } = req.headers;
   try {
     const user = await authModel.getUserByToken(token);
+    req.creatorId=user.id;
     console.log(user);
     if (user.role === 1) {
       next();
     } else {
+      console.log(user);
       res.status(401).json({ err: "Unauthorized access" });
     }
   } catch (err) {
