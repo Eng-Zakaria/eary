@@ -8,14 +8,14 @@ const QuestionDB = require('../../db-model/question-db');
 
 // don't forget you have to set the id admin when you validate in db by just one quick line
 //                                               req.body.adminId = id(FROM DB)
-manageExamRouter.route("/:idCreator")
+manageExamRouter.route("/")
     .all((req, res, nxt) => {
         console.log('in manage');
         nxt();
     })
     .post(async(req, res) => {
         //                                      replace with after edit req.body.adminId`
-        const result = await ExamDB.saveExams(req.params.idCreator, req.body);
+        const result = await ExamDB.saveExams(req.userId, req.body);
         res.status(200).send(result);
     })
 manageExamRouter.post("/:CreatorId", async (req,res) =>{

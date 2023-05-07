@@ -6,6 +6,7 @@ const admin = async (req, res, next) => {
   try {
     const user = await authModel.getUserByToken(token);
     console.log(user);
+    req.userId = user.id;
     if (user.role === 1) {
       next();
     } else {
