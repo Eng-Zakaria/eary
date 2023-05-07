@@ -28,4 +28,19 @@ const validateRegister = (req, res, next) => {
   next();
 };
 
-module.exports = { validateLogin, validateRegister };
+const createUsersSchema = Joi.object({
+  name: Joi.string().min(3).max(20).required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  phone: Joi.string().required(),
+});
+
+const validateCreateUser = (req, res, next) => {
+  const { error } = createUsersSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  next();
+};
+
+module.exports = { validateLogin, validateRegister,validateCreateUser };

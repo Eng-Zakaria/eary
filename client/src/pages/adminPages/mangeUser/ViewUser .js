@@ -47,10 +47,10 @@ const ViewUser = () => {
               <strong>ID:</strong> {user.id}
             </p>
             <p>
-              <strong>Role:</strong> {user.role}
+              <strong>Role:</strong> {user.role=="1"? "Admin" : "Normal"}
             </p>
             <p>
-              <strong>Status:</strong> {user.status ? "0" : "1"}
+              <strong>Status:</strong> {user.status ? "Active" : "inactive"}
             </p>
           </Card.Text>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>

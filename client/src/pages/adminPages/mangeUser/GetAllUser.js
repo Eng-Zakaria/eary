@@ -3,7 +3,7 @@ import axios from "axios";
 import { Table, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getAuthUser } from "../../../helper/Storage";
-
+import Swal from 'sweetalert2';
 const GetAllUser = () => {
   const [users, setUsers] = useState([]);
   const [status, setStatus] = useState("0");
@@ -23,18 +23,28 @@ const GetAllUser = () => {
   }, [auth.token, status]);
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      axios
-        .delete(`http://localhost:4000/users/${id}`, {
-          headers: {
-            token: auth.token,
-          },
-        })
-        .then((res) => {
-          setUsers(users.filter((user) => user.id !== id));
-        })
-        .catch((err) => console.log(err));
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`http://localhost:4000/users/${id}`, {
+            headers: {
+              token: auth.token,
+            },
+          })
+          .then((res) => {
+            setUsers(users.filter((user) => user.id !== id));
+          })
+          .catch((err) => console.log(err));
+      }
+    });
   };
 
   const handleStatusChange = (id, status) => {
@@ -45,7 +55,12 @@ const GetAllUser = () => {
         { headers: { token: auth.token } }
       )
       .then((res) => {
-        alert("User status updated successfully");
+        Swal.fire({
+          icon: 'success',
+          title: 'User status updated successfully',
+          showConfirmButton: false,
+          timer: 1500
+        });
         setUsers(
           users.map((user) => {
             if (user.id === id) {
@@ -58,7 +73,6 @@ const GetAllUser = () => {
       })
       .catch((err) => console.log(err));
   };
-
   return (
     <div className="d-flex justify-content-center">
       <div className="col-10">
@@ -84,7 +98,7 @@ const GetAllUser = () => {
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td>{user.role}</td>
+                <td>{user.role=== '1' ? 'admin':"normal"}</td>
                 <td>{user.phone}</td>
                 <td>
                   <Button
@@ -97,27 +111,27 @@ const GetAllUser = () => {
                   </Button>
                 </td>
                 <td>
-                  <Link
-                    className="btn btn-danger"
-                    variant="danger"
-                    onClick={() => handleDelete(user.id)}
-                  >
-                    Delete
-                  </Link>
-                  <Link
-                    className="btn btn-warning ml-2"
-                    to={`update/${user.id}`}
-                    variant="warning"
-                  >
-                    Update
-                  </Link>
-                  <Link
-                    to={`view/${user.id}`}
-                    className="btn btn-primary ml-2"
-                  >
-                    View
-                  </Link>
-                </td>
+  <Link
+    className="btn btn-danger mr-2"
+    variant="danger"
+    onClick={() => handleDelete(user.id)}
+  >
+    Delete
+  </Link>
+  <Link
+    className="btn btn-warning ml-2"
+    to={`update/${user.id}`}
+    variant="warning"
+  >
+    Update
+  </Link>
+  <Link
+    to={`view/${user.id}`}
+    className="btn btn-primary ml-2"
+  >
+    View
+  </Link>
+</td>
               </tr>
             ))}
           </tbody>
