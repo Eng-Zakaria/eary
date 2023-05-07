@@ -46,9 +46,10 @@ const Header = () => {
                 <Link className="nav-link" to={"/manage-user"}>
                   Manage user
                 </Link>
-                <Link className="nav-link" to={"/manage-question"}>
-                  Manage question
+                <Link className="nav-link" to={"/manage-exam"}>
+                  Manage Exam
                 </Link>
+                
               </Nav>
             </>
           )}

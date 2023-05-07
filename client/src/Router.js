@@ -12,7 +12,9 @@ import ViewUser from "./pages/adminPages/mangeUser/ViewUser ";
 import Admin from "../src/middleware/Admin";
 import UpdateProfile from "./pages/updateProfile/UpdateProfile";
 import PendingPage from "./pages/pendingPage/PendingPage";
-
+import ExamTable from "./pages/adminPages/manageExam/viewExam/ExamTable";
+import CreateExam from "./pages/adminPages/manageExam/createExam/CreateExam"
+import Guest from "../src/middleware/Admin";
 
 export const router = createBrowserRouter([
   {
@@ -25,12 +27,17 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/register",
-        element: <Register />,
+        element: <Guest />,
+        children: [
+          {
+            path: "/login",
+            element: <Login />,
+          },
+          {
+            path: "/register",
+            element: <Register />,
+          },
+        ],
       },
       {
         path: "/manage-user",
@@ -56,6 +63,22 @@ export const router = createBrowserRouter([
         },
       ],
     },
+    {
+      path: "/manage-exam",
+      element: <Admin />,
+      
+      children: [
+        {
+          path: "",
+          element: <ExamTable />,
+        },
+      {
+
+        path: "create",
+        element: <CreateExam/>,
+      },
+    ],
+  },
     {
       path: "/update-profile/:id",
       element: <UpdateProfile />,

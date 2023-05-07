@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import { getAuthUser } from "../../../helper/Storage";
+import Swal from 'sweetalert2';
 
 
 const UpdateUser = () => {
@@ -35,7 +36,7 @@ const UpdateUser = () => {
         setStatus(res.data.status);
       })
       .catch((err) => console.log(err));
-  }, [id]);
+  }, [auth.token, id]);
   
   const handelSubmit = (e) => {
     e.preventDefault();
@@ -53,8 +54,13 @@ const UpdateUser = () => {
         },
       })
       .then((res) => {
-        alert("User updated successfully");
-        navigate("/manage-user");
+        Swal.fire({
+          icon: 'success',
+          title: 'User updated successfully',
+          timer: 1500,
+        }).then(() => {
+          navigate("/manage-user");
+        }); // display a swal success alert and navigate to the manage user page after a delay
       })
       .catch((err) => console.log(err));
   };

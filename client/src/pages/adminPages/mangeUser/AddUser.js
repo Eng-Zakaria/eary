@@ -4,6 +4,7 @@ import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./style/adduser.css";
 import { getAuthUser } from "../../../helper/Storage";
+import Swal from 'sweetalert2';
 
 const AddUser = () => {
   const navigate = useNavigate();
@@ -32,14 +33,19 @@ const AddUser = () => {
         },
       })
       .then((res) => {
-        alert("User created successfully");
-        setName("");
-        setPhone("");
-        setEmail("");
-        setPassword("");
-        setRole("normal");
-        setStatus("active");
-        navigate("/manage-user");
+        Swal.fire({
+          icon: 'success',
+          title: 'User created successfully',
+          timer: 1500,
+        }).then(() => {
+          setName("");
+          setPhone("");
+          setEmail("");
+          setPassword("");
+          setRole("normal");
+          setStatus("active");
+          navigate("/manage-user");
+        }); // display a swal success alert and reset the form and navigate to the manage user page after a delay
       })
       .catch((err) => console.log(err));
   };
@@ -55,6 +61,7 @@ const AddUser = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
           </Form.Group>
           <Form.Group controlId="formEmail">
@@ -63,6 +70,8 @@ const AddUser = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
             />
           </Form.Group>
           <Form.Group controlId="formPhone">
@@ -71,6 +80,7 @@ const AddUser = () => {
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              required
             />
           </Form.Group>
           <Form.Group controlId="formPassword">
@@ -79,6 +89,7 @@ const AddUser = () => {
               type="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </Form.Group>
           <Form.Group controlId="formRole">
@@ -87,6 +98,7 @@ const AddUser = () => {
               as="select"
               value={role}
               onChange={(e) => setRole(e.target.value)}
+             
             >
               <option value="0">Normal User</option>
               <option value="1">Admin</option>
@@ -98,6 +110,7 @@ const AddUser = () => {
               as="select"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
+              
             >
               <option value="1">Active</option>
               <option value="0">Inactive</option>
