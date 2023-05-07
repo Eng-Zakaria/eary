@@ -12,25 +12,20 @@ const QuestionDB = require('../../db-model/question-db');
 manageExamRouter.route("/")
     .all((req, res, nxt) => {
         console.log('in manage');
-        nxt();S
+        nxt();
     })
 
     .post(async(req, res) => {
-        //   try                                   replace with after edit req.body.adminId` 
-        try {  
+        //                                      replace with after edit req.body.adminId`   
         const result = await ExamDB.saveExams(req.creatorId, req.body);
-        res.status(200).send(result, "msg: exam saved successfully");
-        }
-        catch(err){
-            res.status(500).json({"msg":"error in save exam"});
-        }
+        res.status(200).send(result);
     }).get(async(req, res) => {
-        console.log(req.creatorId);
+        console.log("here in deeeepepeee");
         // pay your intention here you have to enter the id of id creator before we go
         try {
             const questions = await ExamDB.getExamsForCreator(req.creatorId);
 
-            res.status(200).json( questions);
+            res.status(200).json(questions);
         } catch (err) {
             res.status(500).json({ "msg": "error in get all exams for creator" });
         }

@@ -74,9 +74,8 @@ module.exports = class ExamDB {
             return result;
         }
         static async getExamsForCreator(creatorId, states, exceptStates) {
-            console.log(creatorId);
             let command = `SELECT * FROM exams WHERE id_creator = ?`;
-           
+            console.log(creatorId);
             if (states || exceptStates) {
                 let result = await ExamDB.getStateExams(states, exceptStates, command, creatorId);
                

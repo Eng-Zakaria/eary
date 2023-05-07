@@ -36,18 +36,24 @@ const CreateExam = () => {
     event.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
-
+  
     try {
-      const response = await axios.post('http://localhost:4000/api/exams/manage', {
-        header,
-        description,
-        duration,
-        difficulty,
-        totalScore,
-      }, { 
+      const examData = [
+        {
+          header,
+          description,
+          duration_mins: duration,
+          difficultly: difficulty,
+          total_score: totalScore,
+        },
+      ];
+  
+      const response = await axios.post('http://localhost:4000/api/exams/manage', examData, {
         headers: {
           token: auth.token,
-          }});
+        },
+      });
+  
       setSuccessMessage(response.data.message);
       setHeader('');
       setDescription('');
@@ -60,60 +66,64 @@ const CreateExam = () => {
   };
 
   return (
-    <div>
-      <h1>Create Exam</h1>
-      {errorMessage && <p>{errorMessage}</p>}
-      {successMessage && <p>{successMessage}</p>}
+    <div className="container my-4">
+      <h1 className="text-center mb-4">Create Exam</h1>
+      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+      {successMessage && <div className="alert alert-success">{successMessage}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="title">Title:</label>
+        <div className="mb-3">
+          <label htmlFor="title" className="form-label">Title:</label>
           <input
             type="text"
             id="title"
+            className="form-control"
             value={header}
             onChange={handleHeaderChange}
             required
           />
         </div>
-        <div>
-          <label htmlFor="description">Description:</label>
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">Description:</label>
           <textarea
             id="description"
+            className="form-control"
             value={description}
             onChange={handleDescriptionChange}
             required
           />
         </div>
-        <div>
-          <label htmlFor="duration">Duration (in minutes):</label>
+        <div className="mb-3">
+          <label htmlFor="duration" className="form-label">Duration (in minutes):</label>
           <input
             type="number"
             id="duration"
+            className="form-control"
             value={duration}
             onChange={handleDurationChange}
             required
           />
         </div>
-        <div>
-          <label htmlFor="difficulty">Difficulty:</label>
-          <select id="difficulty" value={difficulty} onChange={handleDifficultyChange} required>
+        <div className="mb-3">
+          <label htmlFor="difficulty" className="form-label">Difficulty:</label>
+          <select id="difficulty" className="form-select" value={difficulty} onChange={handleDifficultyChange} required>
             <option value="">Select difficulty level</option>
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="totalScore">Total Score:</label>
+        <div className="mb-3">
+          <label htmlFor="totalScore" className="form-label">Total Score:</label>
           <input
             type="number"
             id="totalScore"
+            className="form-control"
             value={totalScore}
             onChange={handleTotalScoreChange}
             required
           />
         </div>
-        <button type="submit">Create Exam</button>
+        <button type="submit" className="btn btn-primary">Create Exam</button>
       </form>
     </div>
   );

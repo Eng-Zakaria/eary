@@ -50,7 +50,8 @@ module.exports = class MySql {
             values = MySql.processDataObjsToArray(objsArr, keys);
 
         const [result] = await MySql.pool.query(queryInsert, [values]);
-        return [result.insertId, result.affectedRows];
+        const finalResult = {"first id inserted" : result.insertId - result.affectedRows,};
+        return [,result.insertId, result.affectedRows];
     }
 
     static update = async(table, obj, keys, columns, conditions) => {
