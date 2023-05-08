@@ -10,6 +10,7 @@ module.exports = class QuestionDB extends AnswersDB {
                 throw new Error('A static class cannot be instantiated');
             }
         }
+        
         static async savaQuestions(examId,questions = []) {
             //'id_exam', in next feature  and i will use Object.keys() and i will not sent the 3rd param in insert
             let keysAndColumnsWithoutAnswers = [ 'id_exam','type', 'header', 'description',
@@ -29,6 +30,7 @@ module.exports = class QuestionDB extends AnswersDB {
             return {"errorExistInInsertingQuestions" :existError,"questions" : savingQuestionsResult,
               "answers" : savingAnswersResult};
         }
+
         static async validActivatedExam(examId) {
             try {
                 const valid = await MySql.checkState('exams', 'exam_id', examId, 'state', 'ACTIVITED');

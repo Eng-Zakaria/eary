@@ -14,6 +14,7 @@ const {validExam,validQuestion} = require("../../middleware/validExams");
 manageExamRouter.route("/questions/:idExam")
 .all(async(req,res,nxt) => {
 req.examId = req.params.idExam;
+console.log("here");
 nxt();
 },validExam)
 .get(async (req,res)=>{
@@ -27,12 +28,14 @@ nxt();
     else
     res.status(200).json(result);
 })
-.put(async (req,res) =>{
-const result = await QuestionDB.updateQuestions(req.examId, req.body); 
-if(result.errorExistInUpdatingQuestions)
-res.status(400).json(result);
-else
-res.status(200).json(result);
+.put(async(req,res) =>{
+    console.log("putting");
+    req.body[0].exam_id = req.params.idExam;
+   const result  = await ExamDB.updateExams(req.userId,req.body);
+   if(result.errorExistInUpdatingQuestions)
+   res.status(400).json(result);
+   else
+   res.status(200).json(result);
 })
 .delete(async (req,res) =>{
      const result = await ExamDB.deleteJustOneExam(req.userId,req.examId);
@@ -89,6 +92,7 @@ manageExamRouter.route("/")
             res.status(403).json({ "msg": "error in get all exams for creator" });
         }
     })
+ 
 
 
     module.exports = manageExamRouter;

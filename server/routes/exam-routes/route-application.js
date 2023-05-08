@@ -4,9 +4,9 @@ const ExamDB = require('../../db-model/exam-db');
 const QuestionDB = require('../../db-model/question-db');
 
 
-appExamRouter.route("/").all((req, res, nx) => {
+appExamRouter.route("/").all((req, res, nxt) => {
     console.log('in route of the applicators');
-    nx();
+    nxt();
 })
 appExamRouter.route("/").get(async(req, res) => {
     const exams = await ExamDB.getStateExams(["ACTIVITED"]);

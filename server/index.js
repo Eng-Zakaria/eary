@@ -14,7 +14,7 @@ const admin = require("./middleware/admin");
 
 app.use("/api/exams/manage/",admin, examsManageRouter);
 
-app.use("api/exams", examsAppRouter);
+app.use("/exams", examsAppRouter);
 
 
 
