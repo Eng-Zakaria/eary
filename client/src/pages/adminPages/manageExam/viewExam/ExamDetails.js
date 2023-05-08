@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
-import { getAuthUser } from '../../../../helper/Storage';
+import { Link, useParams } from "react-router-dom";
+import { getAuthUser } from "../../../../helper/Storage";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import AddQuestion from '../createExam/AddQuestion';
+import AddQuestion from "../createExam/AddQuestion";
 
 const ExamDetails = () => {
   // Get the exam ID from the URL params
@@ -12,6 +12,9 @@ const ExamDetails = () => {
 
   // Define question data as an array
   const [questions, setQuestions] = useState([]);
+
+  // Define a state variable to control whether the AddQuestion modal is shown
+  const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
 
   // Use the useEffect hook to fetch question data from the server
   useEffect(() => {
@@ -29,36 +32,51 @@ const ExamDetails = () => {
     });
   }, []);
 
+  const handleDeleteQuestion = (questionId) => {
+    axios.delete(`http://localhost:4000/api/exams/manage/questions/${id}/edit/${questionId}`, {
+      headers: {
+        token: auth.token,
+      },
+    })
+    .then(response => {
+      // Remove the deleted question from the questions array
+      setQuestions(prevQuestions => prevQuestions.filter(question => question.question_id !== questionId));
+    })
+    .catch(error => {
+      console.error('Error deleting question:', error);
+    });
+  };
+
   return (
     <div className="container">
       <h2>Exam Details</h2>
-      <button type="button" className="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
-        Add Question
-      </button>
+      <button type="button" className="btn btn-primary mb-3" onClick={() => setShowAddQuestionModal(true)}>Add Question</button>
       <ul className="list-group">
         {questions.map(question => (
           <li key={question.question_id} className="list-group-item d-flex justify-content-between align-items-center">
             <div>
               <h3>{question.header}</h3>
               <p>{question.description}</p>
-              <ul>
-                {question.answers.map(answer => (
-                  <li key={answer[0]}>
-                    {answer[1]}
-                  </li>
-                ))}
-              </ul>
+              {Array.isArray(question.answers) && (
+                <ul>
+                  {question.answers.map(answer => (
+                    <li key={answer.answer}>
+                      {answer[1]}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             <div>
               <Link to={`/manage-exam/${id}/edit-question/${question.question_id}`}>
                 <FaEdit className="me-2" />
               </Link>
-              <FaTrash />
+              <FaTrash onClick={() => handleDeleteQuestion(question.question_id)} />
             </div>
           </li>
         ))}
       </ul>
-      <AddQuestion examId={id} auth={auth} setQuestions={setQuestions} />
+      {showAddQuestionModal && <AddQuestion id={id} setQuestions={setQuestions} onClose={() => setShowAddQuestionModal(false)} />}
     </div>
   );
 };

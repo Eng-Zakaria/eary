@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './ExamTable.css';
+import './style/ExamTable.css';
 import { getAuthUser } from '../../../../helper/Storage';
 
 const ExamTable = () => {
@@ -30,7 +30,7 @@ const ExamTable = () => {
 
   // Define a function to handle deleting an exam
   const handleDeleteExam = (examId) => {
-    axios.delete(`http://localhost:4000/api/exams/${examId}`, {
+    axios.delete(`http://localhost:4000/api/exams/manage/questions/${examId}`, {
       headers: {
         token: auth.token,
       },
