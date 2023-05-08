@@ -5,31 +5,111 @@ const manageExamRouter = express.Router();
 
 const ExamDB = require("../../db-model/exam-db");
 const QuestionDB = require('../../db-model/question-db');
-
+const Exam = require("../../models/exam");
+const examValidator = require("../../middleware/validExams");
 // don't forget you have to set the id admin when you validate in db by just one quick line
 //                                               req.body.adminId = id(FROM DB)
+
+
+manageExamRouter.route("/questions/:idExam")
+.all(async(req,res,nxt) => {
+req.examId = req.params.idExam;
+nxt();
+},examValidator)
+.get(async (req,res)=>{
+    const result = await QuestionDB.getQuestionsWithCorrectAnswers(req.examId);
+    res.status(200).json(result);
+})
+.post(async (req,res) =>{
+    const result = await QuestionDB.savaQuestions(req.examId,req.body);
+    if(result.errorExistInInsertingQuestions)
+    res.status(400).json(result);
+    else
+    res.status(200).json(result);
+})
+.put(async (req,res) =>{
+const result = await QuestionDB.updateQuestions(req.examId, req.body); 
+if(result.errorExistInUpdatingQuestions)
+res.status(400).json(result);
+else
+res.status(200).json(result);
+})
+.delete(async (req,res) =>{
+     const result = await ExamDB.deleteJustOneExam(req.userId,req.examId);
+     if(result.error)
+     res.status(400).json(result);
+     else
+     res.status(200).json(result);
+})
+    
+manageExamRouter.param("/:idExam",(req,res,next,value)=>{
+    console.log("here");
+next()
+});
+manageExamRouter.delete("/\/:idExam/",async(req,res)=>{  
+    console.log(req.params.idExam);
+    const [valid,invalid ]= await ExamDB.validExams(req.userId,req.params.idExam);
+    console.log("here in here");
+    console.log(valid);
+    console.log(invalid);
+    if(!invalid[req.params.idExam]){
+    res.status(403).json({});
+    }else{
+        const result = await ExamDB.deleteJustOneExam(req.userId,req.params.idExam);
+        res.status(200).json(result);
+    }
+
+})
+manageExamRouter.put("/\/:idExam/",async(req,res) =>{
+    req.body[0]["exam_id"] = req.params.idExam;
+    const result = await ExamDB.updateExams(req.userId,req.body);
+    res.status(200).json(result);
+})
+
+manageExamRouter.route("/\/questions/:idExam/edit/:idQuestion/")
+.get(async (req,res) => {
+const result = await QuestionDB.getJustQuestionWithCorrectAnswers(req.params.idExam,req.params.idQuestion);
+res.status(200).json(result);
+})
+.put(async (req,res) => {
+    if(!Array.isArray(req.body))
+   req.body = [req.body];
+const result =await QuestionDB.updateQuestions(req.params.idExam,req.body);
+res.status(200).json(result);
+})
+.delete(async (req,res) =>{
+    if(!Array.isArray(req.params.idQuestion))
+    req.params.idQuestion = [req.params.idQuestion];
+    console.log("------------");
+    console.log(req.params.idQuestion);
+    console.log("----------------");
+const result = await QuestionDB.deleteQuestion(req.params.idExam,req.params.idQuestion);
+res.status(200).json(result);
+})
 
 manageExamRouter.route("/")
     .all((req, res, nxt) => {
         console.log('in manage');
         nxt();
     })
-
     .post(async(req, res) => {
         //                                      replace with after edit req.body.adminId`   
         const result = await ExamDB.saveExams(req.userId, req.body);
         res.status(200).send(result);
-    }).get(async(req, res) => {
-        console.log("here in deeeepepeee");
+    })
+    .get(async(req, res) => {
         // pay your intention here you have to enter the id of id creator before we go
         try {
             const questions = await ExamDB.getExamsForCreator(req.userId);
 
             res.status(200).json(questions);
         } catch (err) {
-            res.status(500).json({ "msg": "error in get all exams for creator" });
+            res.status(403).json({ "msg": "error in get all exams for creator" });
         }
     })
+
+
+
     module.exports = manageExamRouter;
 
 // manageExamRouter.route("/")

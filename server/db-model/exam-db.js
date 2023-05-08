@@ -1,5 +1,6 @@
 const MySql = require('./db');
 const objExpanded = require('../util/Helper-methods/expand-obj');
+const QuestionDB = require('./question-db');
 
 module.exports = class ExamDB {
         constructor() {
@@ -48,13 +49,39 @@ module.exports = class ExamDB {
                 delete exam['exam_id'];
                 let keysAndColumns = Object.keys(exam);
                 finalResult[examId] = await MySql.update('exams', exam, keysAndColumns, keysAndColumns,
-                    `exam_id = ${examId} AND id_creator = ${creatorId}`);
+                    `exam_id = ${examId} AND id_creator = ${creatorId}`,examId);
             }
             return finalResult;
         }
+        static async checkIsExamBelongToTheUser(creatorId,examId){
+            try{
+            const valid = await MySql.validForeignKey('exams','exam_id',examId,'id_creator',creatorId);
+            return valid;
+            }catch(error){
+
+            return false;
+
+            }
+        }
+        static async validExams(creatorId,examIds){
+            if(!Array.isArray(examIds)){
+                examIds = [examIds];
+            }
+            let finalResult ={};
+            for(const id of examIds)
+                finalResult[id] =await ExamDB.checkIsExamBelongToTheUser(creatorId,id);
+            
+          let [valid,invalid,allValid] = objExpanded.getJustHashedToTrue(finalResult);           
+           return [valid,invalid,allValid];
+        }
         static async deleteExams(creatorId, examIds) {
-            const result = await MySql.deleteByArr('exams', `id_creator = ${creatorId}`, 'exam_id', examIds);
-            return result;
+         //r const [valid,invalid] = this.validExams(examIds);
+            return await MySql.deleteByArr('exams', `id_creator = ${creatorId}`, 'exam_id', examIds);
+         
+        }
+        static async deleteJustOneExam(creatorId,examId){
+            return await MySql.deleteJustOne('exams','id_creator',creatorId,'exam_id',examId);
+                
         }
         static async getStateExams(states = [], exceptStates = [], existCommand, ...valuesForExistCommand) {
             let command = existCommand || `SELECT * FROM exams WHERE 1=1`;
@@ -75,14 +102,12 @@ module.exports = class ExamDB {
         }
         static async getExamsForCreator(creatorId, states, exceptStates) {
             let command = `SELECT * FROM exams WHERE id_creator = ?`;
-            console.log(creatorId);
             if (states || exceptStates) {
                 let result = await ExamDB.getStateExams(states, exceptStates, command, creatorId);
                
                 return result;
             } else {
-                const [result] = await MySql.pool.query(command, [creatorId])
-                console.log(result);
+                const [result] = await MySql.pool.query(command, [creatorId]);
                 return result;
             }
 

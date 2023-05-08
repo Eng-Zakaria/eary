@@ -1,6 +1,8 @@
 const MySql = require('./db');
 const AnswersDB = require('./answers-db');
+
 const { log } = require('console');
+const  objExpanded  = require('../util/Helper-methods/expand-obj');
 
 module.exports = class QuestionDB extends AnswersDB {
         constructor() {
@@ -8,19 +10,24 @@ module.exports = class QuestionDB extends AnswersDB {
                 throw new Error('A static class cannot be instantiated');
             }
         }
-        static async savaQuestions(questions = []) {
-            let keysAndColumnsWithoutAnswers = ['id_exam', 'type', 'header', 'description',
+        static async savaQuestions(examId,questions = []) {
+            //'id_exam', in next feature  and i will use Object.keys() and i will not sent the 3rd param in insert
+            let keysAndColumnsWithoutAnswers = [ 'id_exam','type', 'header', 'description',
                 'state', 'rank', 'file_path', 'icon_path', 'default_point'
             ];
-            let finalResult = {};
-            const resultQues = await MySql.bulkInsert('questions', questions, keysAndColumnsWithoutAnswers, keysAndColumnsWithoutAnswers);
-            finalResult = {
-                'questionsInsertIdFrom': resultQues[0],
-                'addedRows': resultQues[1]
-            }
-            const savingAnswersResult = await QuestionDB.saveAnswers(questions, resultQues[0]);
-            finalResult['savingAnswersResult'] = savingAnswersResult;
-            return finalResult;
+
+            objExpanded.appendAttrValToObjsArr(questions,"id_exam",examId);
+
+            const savingQuestionsResult = await MySql.bulkInsert('questions', questions, keysAndColumnsWithoutAnswers, keysAndColumnsWithoutAnswers);
+         
+            const savingAnswersResult = await QuestionDB.saveAnswers(questions,savingQuestionsResult["insertedIdFrom"]);
+         
+            let existError = false;
+            if(savingAnswersResult['error'] || savingQuestionsResult['error'])
+            existError = true;
+
+            return {"errorExistInInsertingQuestions" :existError,"questions" : savingQuestionsResult,
+              "answers" : savingAnswersResult};
         }
         static async validActivatedExam(examId) {
             try {
@@ -38,6 +45,7 @@ module.exports = class QuestionDB extends AnswersDB {
                 return false;
             }
         }
+      
         static async isActivatedQuestion(questionId) {
             try {
                 const valid = await MySql.checkState('questions', 'question_id', questionId, 'state', 1);
@@ -120,8 +128,7 @@ module.exports = class QuestionDB extends AnswersDB {
                 const valid = await this.validQuestionToView(examId, questionId);
                 console.log(valid);
                 if (!valid) return {};
-                let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',']') AS answers
-         FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
+                let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',']') AS answers FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
                 const [result] = await MySql.pool.query(command, [examId, questionId]);
                 const question = this.prettyAnswers(result);
                 return question;
@@ -131,18 +138,22 @@ module.exports = class QuestionDB extends AnswersDB {
         }
 
         static async updateQuestions(examId, questions) {
-            let finalResult = {};
+            let finalResult = {'errorExistInUpdatingQuestions' : []};
             for (const question of questions) {
                 const questionId = QuestionDB.processQuestionData(question);
 
                 finalResult[questionId] = finalResult[questionId] || [];
 
                 await QuestionDB.updateAnswersWithQuestion(examId, questionId, question, finalResult);
+                //[id_exam ,type , header,description,state	,rank,file_path	,icon_path	,default_point,created_at	,actived_at	,modified_at	]
 
                 let keysAndColumns = Object.keys(question);
 
                 const result = {};
-                result[examId] = await MySql.update('questions', question, keysAndColumns, keysAndColumns, `question_id = ${questionId} AND id_exam = ${examId} `)
+                result[examId] = await MySql.update('questions', question, keysAndColumns, keysAndColumns, `question_id = ${questionId} AND id_exam = ${examId} `,questionId);
+          
+                if(result[examId]['error'])
+                finalResult['errorExistInUpdatingQuestions'].push(questionId);
 
                 finalResult[questionId].push(result);
             }
@@ -155,7 +166,7 @@ module.exports = class QuestionDB extends AnswersDB {
         }
         static processQuestionData(question) {
             const questionId = question.question_id || question.id;
-            const examId = question.id_exam || question.examId;
+            //const examId = question.id_exam || question.examId;
             delete question.question_id;
             delete question.id;
             delete question.exam_id;
@@ -165,13 +176,16 @@ module.exports = class QuestionDB extends AnswersDB {
         }
         static async updateAnswersWithQuestion(exam_id, questionId, question, finalResult) {
             if (question.answers) {
-                let resultAnswers = await QuestionDB.updateAnswers(exam_id, questionId, question.answers);
+                let result  ={};
+                let resultAnswers = await QuestionDB.updateAnswers(exam_id, questionId, question.answers,result);
                 finalResult[questionId].push({
                     answers: resultAnswers
                 });
+                if(!objExpanded.isEmptyObject(result))
+                finalResult['errorExistInUpdatingQuestions'].push(result);
                 delete question.answers;
             } else {
-                finalResult[questionId].push({ answers: {} });
+                finalResult[questionId].push({ answers: {'info' : "there is no answers has been sent"} });
             }
         }
 
