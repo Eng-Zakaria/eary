@@ -9,7 +9,7 @@
 			"name": "crud-on-exams",
 			"item": [
 				{
-					"name": "crud-on-questions",
+					"name": "crud-on-exams",
 					"item": [
 						{
 							"name": "localhost:4000/api/exams/manage/questions",
@@ -470,15 +470,361 @@
 					]
 				},
 				{
-					"name": "New Folder",
+					"name": "crud-on-questions",
 					"item": [
 						{
 							"name": "New Request",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
 								"method": "GET",
-								"header": []
+								"header": [
+									{
+										"key": "token",
+										"value": "c33bbe9d844ef1d995f22a2a702bfc7e",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\r\n    {\r\n        \"question_id\": 66,\r\n        \"type\": \"new new new new infi\",\r\n        \"header\": \"its11 new head\",\r\n        \"description\": \"new dec ddfddfd\",\r\n        \"answers\": {\r\n            \"1\": {\r\n                \"answer\": \"new11 answer\",\r\n                \"is_correct\": true,\r\n                \"point\": 1123\r\n            },\r\n            \"2\": {\r\n                \"answer\": \" index 2\",\r\n                \"is_correct\": false,\r\n                \"point\": 1343141234\r\n            },\r\n            \"5\": {\r\n                \"answer\": \" index 2\",\r\n                \"is_correct\": false,\r\n                \"point\": 1343141234\r\n            }\r\n        }\r\n    }\r\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:4000/api/exams/manage/questions/53/edit/35",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"exams",
+										"manage",
+										"questions",
+										"53",
+										"edit",
+										"35"
+									]
+								}
 							},
-							"response": []
+							"response": [
+								{
+									"name": "localhost:4000/api/exams/manage/questions/53/edit/35",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "token",
+												"value": "c33bbe9d844ef1d995f22a2a702bfc7e",
+												"type": "default"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:4000/api/exams/manage/questions/53/edit/35",
+											"host": [
+												"localhost"
+											],
+											"port": "4000",
+											"path": [
+												"api",
+												"exams",
+												"manage",
+												"questions",
+												"53",
+												"edit",
+												"35"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "402"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"192-PIVLpcjNmSEKY5z/Zae/4xJY67A\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 08 May 2023 13:59:41 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"question_id\": 35,\n        \"id_exam\": 53,\n        \"type\": \"new new new new infi\",\n        \"header\": \"its11 new head\",\n        \"description\": \"new dec ddfddfd\",\n        \"state\": 0,\n        \"rank\": 8,\n        \"file_path\": \".mp3\",\n        \"icon_path\": \".img\",\n        \"default_point\": 55,\n        \"created_at\": \"2023-05-08T08:09:20.000Z\",\n        \"actived_at\": null,\n        \"answers\": [\n            [\n                0,\n                \"m8\",\n                0,\n                888,\n                \"2023-05-08 12:36:18\"\n            ],\n            [\n                1,\n                \"new11 answer\",\n                1,\n                1123,\n                \"2023-05-08 16:50:11\"\n            ],\n            [\n                2,\n                \" index 2\",\n                0,\n                1343141234,\n                \"2023-05-08 16:50:11\"\n            ]\n        ]\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "localhost:4000/api/exams/manage/questions/53/edit/35",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "token",
+										"value": "c33bbe9d844ef1d995f22a2a702bfc7e",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:4000/api/exams/manage/questions/53/edit/35",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"exams",
+										"manage",
+										"questions",
+										"53",
+										"edit",
+										"35"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "localhost:4000/api/exams/manage/questions/53/edit/35",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "token",
+												"value": "c33bbe9d844ef1d995f22a2a702bfc7e",
+												"type": "default"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:4000/api/exams/manage/questions/53/edit/35",
+											"host": [
+												"localhost"
+											],
+											"port": "4000",
+											"path": [
+												"api",
+												"exams",
+												"manage",
+												"questions",
+												"53",
+												"edit",
+												"35"
+											]
+										}
+									},
+									"status": "Forbidden",
+									"code": 403,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "78"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"4e-GxKiZZeygSnN7tN2rI0WMMOP4pk\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 08 May 2023 14:02:38 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"msg\": \"you have input invalid question(s)\",\n    \"exam_id\": \"53\",\n    \"question_id\": \"35\"\n}"
+								}
+							]
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "token",
+										"value": "c33bbe9d844ef1d995f22a2a702bfc7e",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\r\n    {\r\n        \"question_id\": 66,\r\n        \"type\": \"new new new new infi\",\r\n        \"header\": \"its11 new head\",\r\n        \"description\": \"new dec ddfddfd\",\r\n        \"answers\": {\r\n            \"1\": {\r\n                \"answer\": \"new11 answer\",\r\n                \"is_correct\": true,\r\n                \"point\": 1123\r\n            },\r\n            \"2\": {\r\n                \"answer\": \" index 2\",\r\n                \"is_correct\": false,\r\n                \"point\": 1343141234\r\n            },\r\n            \"5\": {\r\n                \"answer\": \" index 2\",\r\n                \"is_correct\": false,\r\n                \"point\": 1343141234\r\n            }\r\n        }\r\n    }\r\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:4000/api/exams/manage/questions/53/edit/36",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"exams",
+										"manage",
+										"questions",
+										"53",
+										"edit",
+										"36"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "New Request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "token",
+												"value": "c33bbe9d844ef1d995f22a2a702bfc7e",
+												"type": "default"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "[\r\n    {\r\n        \"question_id\": 66,\r\n        \"type\": \"new new new new infi\",\r\n        \"header\": \"its11 new head\",\r\n        \"description\": \"new dec ddfddfd\",\r\n        \"answers\": {\r\n            \"1\": {\r\n                \"answer\": \"new11 answer\",\r\n                \"is_correct\": true,\r\n                \"point\": 1123\r\n            },\r\n            \"2\": {\r\n                \"answer\": \" index 2\",\r\n                \"is_correct\": false,\r\n                \"point\": 1343141234\r\n            },\r\n            \"5\": {\r\n                \"answer\": \" index 2\",\r\n                \"is_correct\": false,\r\n                \"point\": 1343141234\r\n            }\r\n        }\r\n    }\r\n]",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:4000/api/exams/manage/questions/53/edit/36",
+											"host": [
+												"localhost"
+											],
+											"port": "4000",
+											"path": [
+												"api",
+												"exams",
+												"manage",
+												"questions",
+												"53",
+												"edit",
+												"36"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "231"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"e7-o5WPGZD7G8RjXf23zCT09aNBw8E\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 08 May 2023 14:03:20 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"36\": [\n        {\n            \"answers\": {\n                \"36\": {\n                    \"InsertId\": 0,\n                    \"isFailed\": true,\n                    \"error\": \"FAILED TO INSERTED/UPDATED DATA : Missed For main reference ( 5 ) }\",\n                    \"id\": \"5\"\n                }\n            }\n        },\n        {\n            \"53\": {\n                \"InsertId\": 0,\n                \"isFailed\": false\n            }\n        }\n    ],\n    \"errorExistInUpdatingQuestions\": [\n        {\n            \"36\": [\n                \"5\"\n            ]\n        }\n    ]\n}"
+								}
+							]
 						}
 					]
 				}
