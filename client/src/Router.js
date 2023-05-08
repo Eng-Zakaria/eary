@@ -16,6 +16,9 @@ import ExamTable from "./pages/adminPages/manageExam/viewExam/ExamTable";
 import CreateExam from "./pages/adminPages/manageExam/createExam/CreateExam"
 
 import ExamDetails from "./pages/adminPages/manageExam/viewExam/ExamDetails";
+import UpdateExam from "./pages/adminPages/manageExam/createExam/UpdateExam";
+import EditQuestion from "./pages/adminPages/manageExam/createExam/EditQuestion";
+import BrowseExams from "./pages/userPages/browseExams/BrowseExams";
 
 export const router = createBrowserRouter([
   {
@@ -72,10 +75,19 @@ export const router = createBrowserRouter([
           path:":id",
           element: <ExamDetails/>,
         },
+        {
+          path:":Examid/edit-question/:id",
+          element: <EditQuestion/>,
+        },
       {
 
         path: "create",
         element: <CreateExam/>,
+      },
+      {
+
+        path: "update-exam/:examId",
+        element: <UpdateExam/>,
       },
     ],
   },
@@ -87,6 +99,10 @@ export const router = createBrowserRouter([
     {
       path: "/panding",
       element: <PendingPage />,
+    },
+    {
+      path: "/browse-exam",
+      element: <BrowseExams />,
     }
    
     ],

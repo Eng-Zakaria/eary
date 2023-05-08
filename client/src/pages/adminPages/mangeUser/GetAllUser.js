@@ -98,7 +98,7 @@ const GetAllUser = () => {
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td>{user.role=== '1' ? 'admin':"normal"}</td>
+                <td>{user.role== '1' ? 'admin':"normal"}</td>
                 <td>{user.phone}</td>
                 <td>
                   <Button

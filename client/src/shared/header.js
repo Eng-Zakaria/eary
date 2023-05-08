@@ -53,6 +53,17 @@ const Header = () => {
               </Nav>
             </>
           )}
+          {auth && auth.role === '0' && (
+            <>
+              <Nav className="me-auto">
+                <Link className="nav-link" to={"/browse-exam"}>
+                  Browse Exams
+                </Link>
+                
+        
+              </Nav>
+            </>
+          )}
           <Nav className="ms-auto">
           {!auth && (
             <>
