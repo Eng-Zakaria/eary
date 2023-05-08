@@ -1,70 +1,40 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Eary System (35 Points)
+project called "Eary", which help people to check their hearing problems.
+_______________________________________________________________________
+## Requirements: 
+• When the admin logs in, he creates a few questions with several possible responses for each. 
+There is only one valid response for each question.
+• After registering with the system, users cannot log in until the admin approve their account.
+• Users are allowed to retake the hearing assistant exam as many as they want. The user must 
+first listen to the audio recording for the multiple-choice questions before choosing the 
+appropriate answer.
+• The user displays his or her exam result after completion.
+• The user may also see a history of the exams he has previously taken.
+_______________________________________________________________________
+## In this system we have 2 types of users:
+1. Admin User: 
+• Feature Including:
+• Login/ Logout (3 Points).
+• Update Profile (3 Points).
+• Manage other users accounts (CRUD) (3 Points).
+• Manage hearing assistance questions (CRUD) (3 Points).
+• Manage answers for each question (CRUD) (3 Points).
+2. Normal User:
+• Feature Including:
+• Login/ Logout. (3 Points)
+• Register. (3 Points)
+• Update profile (3 Points)
+• Take the hearing assistance exam. (3 Points)
+• Show history of Exams. (3 Points)
+_______________________________________________________________________
+## Database Models:
+# • User model consists of:
+o (Name, Email, Password, Phone, Status (active, in-active), Type (admin, normal)).
+# • Hearing assistance Exam model consist of:
+o (Name, Question, Audio File, statue(active, in-active).
+# • Exam Question model has many Responses, and each response consist of:
+o (Text, priority)
+_______________________________________________________________________
+• Every team member will be questioned regarding any front- or backend-related matter. (5 Points)
+• Backend should be in (node.js & Express.js) and the backend should be in React.js.
+• Using Git in this project by team members will be bonus.

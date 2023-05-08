@@ -25,14 +25,14 @@ const EditQuestion = () => {
     .catch(error => {
       console.error('Error fetching question data:', error);
     });
-  }, []);
+  }, [Examid, auth.token, id]);
 
   // Define a function to handle form submissions
   const handleSubmit = (event) => {
     event.preventDefault();
     // Make a PUT request to update the question data on the server
     const questionData=[question]
-    axios.put(`http://localhost:4000/api/exams/manage/questions/${Examid}/edit/${id}`,questionData, {
+    axios.put(`http://localhost:4000/api/exams/manage/questions/${Examid}/edit/${id}`, questionData, {
       headers: {
         token: auth.token,
       }

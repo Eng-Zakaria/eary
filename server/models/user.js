@@ -17,6 +17,7 @@ class User {
       db.query("SELECT * FROM users", (err, res) => {
         if (err) return reject(err);
         else {
+         
           const users = res.map(
             (user) =>
               new User(
@@ -65,6 +66,7 @@ class User {
       });
     });
   }
+  //                let u1  = await User.getUserById(1)
   static async getUserById(id) {
     return new Promise((resolve, reject) => {
       const sql = `SELECT * FROM users WHERE id = ?`;
@@ -76,8 +78,8 @@ class User {
           reject(new Error(`Users ${id} not found`));
         } else {
           const { id, name, email, password, phone, status, role, token } =
-            res[0];
-          resolve(
+            res[0];   //[ {id:1 , name:"ali"} , {id:2,nam} , {id,mane} ,{to}] 
+          resolve(       // 0     1       2          3
             new User(id, name, email, password, phone, status, role, token)
           );
         }
@@ -103,6 +105,9 @@ class User {
       });
     });
   }
+  // User.getUserById
+  // let user1 = new User(,)
+  //user1.update()
   update() {
     return new Promise((resolve, reject) => {
       const sql = `UPDATE users SET name = ?, email = ?, password = ?, phone = ?, status = ?, role = ?, token = ? WHERE id = ?`;
@@ -117,7 +122,7 @@ class User {
       });
     });
   }
-  
+  // u1 = new User();
   delete() {
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM users WHERE id = ?`;
