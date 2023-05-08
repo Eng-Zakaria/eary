@@ -126,8 +126,12 @@ module.exports = class ExamDB {
             }
 
         }
-
-
+        static async getJustExam(creatorId,examId){
+            const command = `SELECT * FROM exams WHERE id_creator = ? AND exam_id = ?`;
+             const [result] = await MySql.pool.query(command,[creatorId,examId]);
+            return result;
+        }
+        
     }
     /*
     let exams = [{

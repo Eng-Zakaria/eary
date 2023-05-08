@@ -12,10 +12,9 @@ const {validExam,validQuestion} = require("../../middleware/validExams");
 
 
 manageExamRouter.route("/questions/:idExam/edit/:questionId")
-.all(async(req,res,nxt) => {
+.all((req,res,nxt) => {
 req.examId = req.params.idExam;
 req.questionId = req.params.questionId;
-
 nxt();
 },validExam,validQuestion)
 .get(async (req,res)=>{
@@ -42,7 +41,7 @@ res.status(200).json(result);
 
 
 manageExamRouter.route("/questions/:idExam")
-.all(async(req,res,nxt) => {
+.all((req,res,nxt) => {
 req.examId = req.params.idExam;
 console.log("here");
 nxt();
@@ -58,14 +57,29 @@ nxt();
     else
     res.status(200).json(result);
 })
+
+
+
+
+
+
+manageExamRouter.route("/:idExam")
+.all((req,res,nxt) =>{
+req.examId = req.params.idExam;
+nxt();
+},validExam)
 .put(async(req,res) =>{
     console.log("putting");
-    req.body[0].exam_id = req.params.idExam;
+    req.body[0].exam_id = req.examId;
    const result  = await ExamDB.updateExams(req.userId,req.body);
    if(result.errorExistInUpdatingQuestions)
    res.status(400).json(result);
    else
    res.status(200).json(result);
+})
+.get(async (req,res) => {
+const exam = await ExamDB.getJustExam(req.userId,req.examId);
+res.status(200).json(exam);
 })
 .delete(async (req,res) =>{
      const result = await ExamDB.deleteJustOneExam(req.userId,req.examId);
@@ -74,8 +88,6 @@ nxt();
      else
      res.status(200).json(result);
 })
-    
-
 
 manageExamRouter.route("/")
     .all((req, res, nxt) => {
@@ -95,6 +107,7 @@ manageExamRouter.route("/")
         }
     })
  
+    
 
 
     module.exports = manageExamRouter;
