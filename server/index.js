@@ -11,9 +11,12 @@ const authRouter = require("./routes/authRouter");
 const examsAppRouter = require("./routes/exam-routes/route-application");
 const examsManageRouter = require("./routes/exam-routes/router-manage");
 const admin = require("./middleware/admin");
-app.use("/api/exams", examsAppRouter);
-app.use("/api/exams/manage",admin, examsManageRouter);
-app.use("/api/exams/manage",admin, examsManageRouter);
+
+app.use("/api/exams/manage/",admin, examsManageRouter);
+
+app.use("/\/api/exams/", examsAppRouter);
+
+
 
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
@@ -21,6 +24,10 @@ app.use("/auth", authRouter);
 
 
 const port = 4000;
+app.all("*",(req,res) =>{
+    console.log("route doesn't exist "+req.path);
+    res.sendStatus(404);
+})
 app.listen(port, "localhost", () => {
     console.log(`Server is running on port ${port}`);
   

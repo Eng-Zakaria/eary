@@ -9,15 +9,17 @@ module.exports = class AnswersDB {
             }
         }
         static async saveAnswers(questions = [], firstIdInserted) {
-            let finalResult = {};
+            let finalResult = {'errorExistIn':[]};
             let keysAndColumns = ['id_question', 'answer_index', 'answer', 'is_correct', 'point'];
             for (const i in questions) {
-
-                if (!AnswersDB.appendIdForEachAnswer(questions[i], (+i + firstIdInserted))) {
-                    finalResult[firstIdInserted + i] = [0];
+                const currentId = +firstIdInserted + +i;
+                if (!AnswersDB.appendIdForEachAnswer(questions[i], (currentId))) {
+                    finalResult[currentId] = {'error' : `INVALID QUESTION : question ID(${currentId}})have no answer plz insert any answer to this question to view it or that question will be like never existed`,
+                                'id':currentId,'commandToDeleteThatQuestion':undefined };
+                    finalResult['errorExistIn'].push(currentId);            
                     continue;
                 }
-                let lastIndex = await AnswersDB.getLastIndexOfAnswers(questions[i].id);
+                let lastIndex = await AnswersDB.getLastIndexOfAnswers(questions[i]['id_question']);
 
                 if (lastIndex > 0) lastIndex++;
 
@@ -26,8 +28,11 @@ module.exports = class AnswersDB {
                 }, {
                     'answer_index': objExpanded.adder
                 });
-                const result = await MySql.bulkInsert('answers', questions[i].answers, keysAndColumns, keysAndColumns);
-                finalResult[+i + firstIdInserted] = result;
+                const result = await MySql.bulkInsert('answers', questions[i]['answers'], keysAndColumns, keysAndColumns);
+                if(result['error'])
+                   finalResult['errorExistIn'].push(currentId);
+
+                finalResult[currentId] = result;
             }
             return finalResult;
         }
@@ -57,19 +62,30 @@ module.exports = class AnswersDB {
             const [answerObjs] = await MySql.pool.query(command, [questionId, IS_CORRECT]);
             return answerObjs;
         }
-        static async updateAnswers(examId, questionId, indicesObj) {
+        static async updateAnswers(examId, questionId, indicesObj,result) {
             let finalResult = {};
+
             try {
                 const valid = await MySql.validForeignKey('questions', 'question_id', questionId, 'id_exam', examId);
-                if (!valid)
+                if (!valid){
                     return { 'INVALID_QUESTION': [examId, questionId, Object.keys(indicesObj)] };
+                }
                 const indices = Object.keys(indicesObj);
                 for (const index of indices) {
 
                     let alteredAttrs = Object.keys(indicesObj[index]);
-                    finalResult[index] = await MySql.update('answers', indicesObj[index], alteredAttrs, alteredAttrs,
-                        `id_question = ${questionId} AND answer_index = ${index}`);
+                    finalResult[questionId] = await MySql.update('answers', indicesObj[index], alteredAttrs, alteredAttrs,
+                        `id_question = ${questionId} AND answer_index = ${index}`,index);
+
+                        if(finalResult[questionId]['error']){
+                            console.log("here");
+                         
+                            result[questionId] = result[questionId] || [];
+                            result[questionId].push(index);
+                        }
+                    
                 }
+                
                 return finalResult;
             } catch (invalid) {
                 return { 'INVALID_QUESTION': [examId, questionId, Object.keys(indicesObj)] };

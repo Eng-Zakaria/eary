@@ -1,4 +1,5 @@
 const { log } = require("console");
+const { object } = require("joi");
 
 const appendObjToObjs = (objsArr, appendedObj) => {
     return objsArr.map((obj) => Object.assign(obj, obj, appendedObj));
@@ -36,6 +37,7 @@ const addRepeatedChars = (word = "", linkingStr, toConcat = []) => {
     result += word + toConcat[toConcat.length - 1];
     return result;
 }
+
 const boundArrayString = (arrString) => {
     for (let i = 0; i < arrString.length; i++)
         arrString[i] = "\"" + arrString[i] + "\"";
@@ -48,8 +50,8 @@ const twoDigits = (d) => {
     return d.toString();
 }
 
-const toMysqlFormat = (date) => {
-    return date.getUTCFullYear() + "-" + twoDigits(1 + date.getUTCMonth()) + "-" + twoDigits(date.getUTCDate()) + " " + twoDigits(date.getHours()) + ":" + twoDigits(date.getUTCMinutes()) + ":" + twoDigits(date.getUTCSeconds());
+const toMysqlFormat = (dateObj) => {
+    return dateObj.getUTCFullYear() + "-" + twoDigits(1 + dateObj.getUTCMonth()) + "-" + twoDigits(dateObj.getUTCDate()) + " " + twoDigits(dateObj.getHours()) + ":" + twoDigits(dateObj.getUTCMinutes()) + ":" + twoDigits(dateObj.getUTCSeconds());
 };
 
 
@@ -82,6 +84,16 @@ const appendAttrValToObjsArr = (objsArr, attr, value) => {
     objsArr.forEach((obj) => obj[attr] = value);
     return objsArr;
 }
+const appendAttrValToEachAttrObj = (obj,attr,value) =>{
+Object.keys(obj).forEach((attrObj) =>{
+        obj[attrObj][attr] = value;
+})
+return obj;
+}
+
+const isEmptyObject = (obj) =>{
+    return JSON.stringify(obj) === '{}'
+}
 const deleteMultiAttrsVal = (objsArr, keys) => {
     for (const obj of objsArr) {
         keys.forEach(key => {
@@ -89,6 +101,23 @@ const deleteMultiAttrsVal = (objsArr, keys) => {
         });
     }
     return objsArr;
+}
+const getJustHashedToTrue= (obj) =>{
+    const trulyValues ={};
+    const unTrulyValue = {};
+    let allTrue = true;
+    const keys = Object.keys(obj);
+
+keys.forEach((key) => {
+if(obj[key]){
+trulyValues[key] = obj[key];
+}
+else {
+allTrue = false;
+unTrulyValue[key] = obj[key];
+}
+});
+return [trulyValues,unTrulyValue,allTrue];
 }
 module.exports = {
     appendObjToObjs,
@@ -99,6 +128,9 @@ module.exports = {
     appendAttrValToObjsArr,
     addRepeatedChars,
     toMysqlFormat,
-    boundArrayString
+    boundArrayString,
+    getJustHashedToTrue,
+    appendAttrValToEachAttrObj,
+    isEmptyObject
 
 }
