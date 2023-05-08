@@ -11,6 +11,36 @@ const {validExam,validQuestion} = require("../../middleware/validExams");
 //                                               req.body.adminId = id(FROM DB)
 
 
+manageExamRouter.route("/questions/:idExam/edit/:questionId")
+.all(async(req,res,nxt) => {
+req.examId = req.params.idExam;
+req.questionId = req.params.questionId;
+
+nxt();
+},validExam,validQuestion)
+.get(async (req,res)=>{
+    const result = await QuestionDB.getJustQuestionWithCorrectAnswers(req.examId,req.questionId);
+    res.status(200).json(result);
+})
+.put(async (req,res) =>{
+    req.body[0].question_id = req.questionId; 
+const result = await QuestionDB.updateQuestions(req.examId, req.body); 
+if(result.errorExistInUpdatingQuestions)
+res.status(400).json(result);
+else
+res.status(200).json(result);
+})
+.delete(async (req,res) =>{
+     const questionId= [req.questionId];
+     const result = await QuestionDB.deleteQuestion(req.examId,questionId);
+     if(result.error)
+     res.status(400).json(result);
+     else
+     res.status(200).json(result);
+})
+    
+
+
 manageExamRouter.route("/questions/:idExam")
 .all(async(req,res,nxt) => {
 req.examId = req.params.idExam;
@@ -46,34 +76,6 @@ nxt();
 })
     
 
-manageExamRouter.route("/questions/:idExam/edit/:questionId")
-.all(async(req,res,nxt) => {
-req.examId = req.params.idExam;
-req.questionId = req.params.questionId;
-
-nxt();
-},validExam,validQuestion)
-.get(async (req,res)=>{
-    const result = await QuestionDB.getJustQuestionWithCorrectAnswers(req.examId,req.questionId);
-    res.status(200).json(result);
-})
-.put(async (req,res) =>{
-    req.body[0].question_id = req.questionId; 
-const result = await QuestionDB.updateQuestions(req.examId, req.body); 
-if(result.errorExistInUpdatingQuestions)
-res.status(400).json(result);
-else
-res.status(200).json(result);
-})
-.delete(async (req,res) =>{
-     const questionId= [req.questionId];
-     const result = await QuestionDB.deleteQuestion(req.examId,questionId);
-     if(result.error)
-     res.status(400).json(result);
-     else
-     res.status(200).json(result);
-})
-    
 
 manageExamRouter.route("/")
     .all((req, res, nxt) => {
