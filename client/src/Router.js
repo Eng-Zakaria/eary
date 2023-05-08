@@ -1,11 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 
-<<<<<<< HEAD
 import Home from "./HomePage/Home";
-=======
-
->>>>>>> 8c99c42e7365d6d8bfadf0341a848d4f394c94d7
 
 import Login from "./Auth/Login";
 import Register from "./Auth/Register";
@@ -22,12 +18,8 @@ import CreateExam from "./pages/adminPages/manageExam/createExam/CreateExam"
 import ExamDetails from "./pages/adminPages/manageExam/viewExam/ExamDetails";
 import UpdateExam from "./pages/adminPages/manageExam/createExam/UpdateExam";
 import EditQuestion from "./pages/adminPages/manageExam/createExam/EditQuestion";
-<<<<<<< HEAD
 import ExamsGrid from "./pages/userPages/browseExams/BrowseExams";
-=======
 import BrowseExams from "./pages/userPages/browseExams/BrowseExams";
-import Home from "./homePage/Home";
->>>>>>> 8c99c42e7365d6d8bfadf0341a848d4f394c94d7
 
 export const router = createBrowserRouter([
   {
