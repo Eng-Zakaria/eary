@@ -1,34 +1,42 @@
-import React, { useState, useEffect } from "react";
-import Search from "./Search";
-import ExamGrid from "./ExamGrid";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-function BrowseExams() {
+const BrowseExams = () => {
+  // Define exam data as an array
   const [exams, setExams] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
 
+  // Use the useEffect hook to fetch exam data from the server
   useEffect(() => {
-    // Fetch exams from database and update state
-    fetch("/api/exams")
-      .then((response) => response.json())
-      .then((data) => setExams(data))
-      .catch((error) => console.log(error));
+    axios.get('http://localhost:4000/api/exams/')
+    .then(response => {
+      setExams(response.data);
+      console.log(response.data)
+    })
+    .catch(error => {
+      console.error('Error fetching exam data:', error);
+    });
   }, []);
 
-  const handleSearchQueryChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const filteredExams = exams.filter((exam) =>
-    exam.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <div>
-      <Search onSearchQueryChange={handleSearchQueryChange} />
-
-      <ExamGrid exams={filteredExams} />
+    <div className="row">
+      {exams.map(exam => (
+        <div key={exam.exam_id} className="col-md-4 mb-4">
+          <div className="card h-100">
+            {exam.logo && <img src={exam.logo} className="card-img-top" alt={exam.header} />}
+            <div className="card-body">
+              <h5 className="card-title">{exam.header}</h5>
+              <p className="card-text">{exam.description}</p>
+              <p className="card-text">Duration: {exam.duration_mins} minutes</p>
+              <p className="card-text">Difficulty: {exam.difficultly}</p>
+              <p className="card-text">Total Score: {exam.total_score}</p>
+              <Link to={`/exam/${exam.exam_id}`} className="btn btn-primary">View Exam</Link>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
-}
+};
 
 export default BrowseExams;
