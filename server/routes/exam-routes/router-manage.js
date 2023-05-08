@@ -10,7 +10,7 @@ const {validExam,validQuestion} = require("../../middleware/validExams");
 // don't forget you have to set the id admin when you validate in db by just one quick line
 //                                               req.body.adminId = id(FROM DB)
 
-/*
+
 manageExamRouter.route("/questions/:idExam")
 .all(async(req,res,nxt) => {
 req.examId = req.params.idExam;
@@ -42,7 +42,7 @@ res.status(200).json(result);
      res.status(200).json(result);
 })
     
-*/
+
 manageExamRouter.route("/questions/:idExam/edit/:questionId")
 .all(async(req,res,nxt) => {
 req.examId = req.params.idExam;
