@@ -119,6 +119,19 @@ unTrulyValue[key] = obj[key];
 });
 return [trulyValues,unTrulyValue,allTrue];
 }
+
+
+const ahemedAshref = (arrOfArr = [] , getOutIndex , nameOfAttr = []) => {
+    let objResult = {};
+    arrOfArr.forEach( (array) => {
+        nameOfAttr.forEach((attr,index) => {
+            objResult[array[getOutIndex]] = {};
+            objResult[array][getOutIndex][attr] = array[index];
+        })
+
+    })
+    return objResult;
+}
 module.exports = {
     appendObjToObjs,
     appendObjToObjsWithFunction,

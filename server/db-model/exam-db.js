@@ -131,6 +131,14 @@ module.exports = class ExamDB {
              const [result] = await MySql.pool.query(command,[creatorId,examId]);
             return result;
         }
+        static async validActivatedExam(examId) {
+            try {
+                const valid = await MySql.checkState('exams', 'exam_id', examId, 'state', 'ACTIVITED');
+                return valid;
+            } catch (error) {
+                return false;
+            }
+        }
         
     }
     /*

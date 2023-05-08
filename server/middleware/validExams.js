@@ -1,5 +1,6 @@
 const validations = require('./global-validations');
 const ExamDB = require('../db-model/exam-db');
+const  QuestionDB= require('../db-model/question-db');
 
 const validExam = async (req,res,nxt)=>{
     if(!validations.isNumber(req.examId))
@@ -31,8 +32,34 @@ const validQuestion = async (req,res,nxt) =>{
 }
 
 }
+const validExamToView = async(req,res,nxt) => {
+    if(!validations.isNumber(req.examId)){
+    res.status(403).json({msg : "INVALID EXAM ID : ID must be numerical value"});
+    }else{
+    const valid = await ExamDB.validActivatedExam(req.examId);
+    if(!valid){
+        res.status(403).json({msg : "you'r trying to get doesn't exist exam (s)","exam_id" : req.examId });
+    }else{
+        nxt();
+    }
+}
+}
+const validQuestionToView = async(req,res,nxt) => {
+    let valid = await QuestionDB.isActivatedQuestion(req.questionId);
+
+    if(!valid){
+        res.status(403).json({msg : "you'r trying to get doesn't exist question (s)","exam_id" : req.examId,"question_id":req.questionId });
+
+    }else{
+        nxt();
+    }
+}
+
 
 
 module.exports = {
     validExam,
-    validQuestion};
+    validQuestion,
+    validExamToView,
+    validQuestionToView
+};

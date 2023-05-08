@@ -8,7 +8,7 @@ const admin = async (req, res, next) => {
     req.creatorId=user.id;
     console.log(user);
     req.userId = user.id;
-    if (user.role === 1) {
+    if (user.role === 1) { // role admin 1 user 0 
       next();
     } else {
       console.log(user);

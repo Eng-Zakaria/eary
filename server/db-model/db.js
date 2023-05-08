@@ -86,7 +86,7 @@ module.exports = class MySql {
 
     static deleteByArr = async(table, condition, columnForArr, array) => {
         let queryDelete = `DELETE FROM ${table} WHERE ${condition} AND ${columnForArr} IN (${array.join(',')})`;
-        const [result] = await MySql.pool.query(queryDelete);
+        const [result] = await MySql.pool.query(queryDelete); // let [a] = [1,2,3]
         if(!result.affectedRows || result.affectedRows < array.length)
         return {"error" : ` there is some data or whole doesn't exist for what you are trying to delete majesty`,
         "missed" : array.length - result.affectedRows,
@@ -95,6 +95,17 @@ module.exports = class MySql {
 
         return {"noDeleted": result.affectedRows};
     }
+/**
+ *                 -> promise <- single thread Async
+ *                     ->
+ * -> x -> y -> z -> u -> p
+ *                     ->  
+ *                 let p = new Promise( (resolve,reject) => {
+ * 
+ *                        }   )       
+ * 
+ */
+
     static deleteJustOne = async(table,conditionName,conditionValue,primaryColumnName,primaryValue ) => {
         let queryDelete = `DELETE FROM ${table} WHERE ${primaryColumnName} = ? AND ${conditionName} = ?`;
         const [result] = await MySql.pool.query(queryDelete,[primaryValue,conditionValue]);
@@ -136,6 +147,21 @@ module.exports = class MySql {
             }
         });
     }
+
+    /**
+     * async 
+     * await 
+     *   
+     * 
+     *   p.then(
+     *     (bool)=>{
+     *        } )
+     *   
+     *  p.catch((error) = >)
+     *          
+     *            
+     * 
+     */
 
     
 

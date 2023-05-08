@@ -10,7 +10,7 @@ module.exports = class QuestionDB extends AnswersDB {
                 throw new Error('A static class cannot be instantiated');
             }
         }
-        
+
         static async savaQuestions(examId,questions = []) {
             //'id_exam', in next feature  and i will use Object.keys() and i will not sent the 3rd param in insert
             let keysAndColumnsWithoutAnswers = [ 'id_exam','type', 'header', 'description',
@@ -31,14 +31,7 @@ module.exports = class QuestionDB extends AnswersDB {
               "answers" : savingAnswersResult};
         }
 
-        static async validActivatedExam(examId) {
-            try {
-                const valid = await MySql.checkState('exams', 'exam_id', examId, 'state', 'ACTIVITED');
-                return valid;
-            } catch (error) {
-                return false;
-            }
-        }
+     
    
         static async isActivatedQuestion(questionId) {
             try {
@@ -103,22 +96,9 @@ module.exports = class QuestionDB extends AnswersDB {
             }
             return questions;
         }
-        static async validQuestionToView(examId, questionId) {
-            let valid = await this.validActivatedExam(examId);
-
-            if (!valid) throw new Error(`ACCESS DENIED`);
-
-            if (!valid) throw new Error('NOT VALID');
-            valid = await this.isActivatedQuestion(questionId);
-
-            if (!valid) throw new Error('NOT ACTIVATED');
-            return true;
-        }
+   
         static async getJustQuestionWithoutCorrectAnswers(examId, questionId) {
             try {
-                const valid = await this.validQuestionToView(examId, questionId);
-             
-                if (!valid) return {};
                 let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',']') AS answers FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
                 const [result] = await MySql.pool.query(command, [examId, questionId]);
                 const question = this.prettyAnswers(result);

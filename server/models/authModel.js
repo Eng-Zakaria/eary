@@ -69,13 +69,14 @@ class AuthModel {
   }
   static async getUserByToken(token) {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM users WHERE token = "${token}"`, (err, res) => {
+    db.query(`SELECT * FROM users WHERE token = "${token}"`, (err, res) => {
         if (err) return reject(err);
         else {
           if (res.length > 0) {
             const { id, name, email, password, phone, status, role, token } =
-              res[0];
-            return resolve(
+              res[0]; // {'id_question' : 11 , 'answer_index' : 1 , } = obj =>{..,..,..}
+            return resolve( // {'id_question' : 11 , 'answer_index' : 1 , }
+            //         {'id_question' : 11 , 'answer_index' : 1 , }
               new User(id, name, email, password, phone, status, role, token)
             );
           } else {
