@@ -72,56 +72,17 @@ res.status(200).json(result);
 })
     
 
-
-
-manageExamRouter.delete("/\/:idExam/",async(req,res)=>{  
-    const [valid,invalid ]= await ExamDB.validExams(req.userId,req.params.idExam);
-  
-    if(!invalid[req.params.idExam]){
-    res.status(403).json({});
-    }else{
-        const result = await ExamDB.deleteJustOneExam(req.userId,req.params.idExam);
-        res.status(200).json(result);
-    }
-
-})
-manageExamRouter.put("/\/:idExam/",async(req,res) =>{
-    req.body[0]["exam_id"] = req.params.idExam;
-    const result = await ExamDB.updateExams(req.userId,req.body);
-    res.status(200).json(result);
-})
-
-manageExamRouter.route("/\/questions/:idExam/edit/:idQuestion/")
-.get(async (req,res) => {
-const result = await QuestionDB.getJustQuestionWithCorrectAnswers(req.params.idExam,req.params.idQuestion);
-res.status(200).json(result);
-})
-.put(async (req,res) => {
-    if(!Array.isArray(req.body))
-   req.body = [req.body];
-const result =await QuestionDB.updateQuestions(req.params.idExam,req.body);
-res.status(200).json(result);
-})
-.delete(async (req,res) =>{
-    if(!Array.isArray(req.params.idQuestion))
-    req.params.idQuestion = [req.params.idQuestion];
-
-const result = await QuestionDB.deleteQuestion(req.params.idExam,req.params.idQuestion);
-res.status(200).json(result);
-})
-
 manageExamRouter.route("/")
     .all((req, res, nxt) => {
         console.log('in manage');
+        console.log("spcific in here");
         nxt();
     })
     .post(async(req, res) => {
-        //                                      replace with after edit req.body.adminId`   
         const result = await ExamDB.saveExams(req.userId, req.body);
         res.status(200).send(result);
     })
     .get(async(req, res) => {
-        // pay your intention here you have to enter the id of id creator before we go
         try {
             const questions = await ExamDB.getExamsForCreator(req.userId);
 
@@ -130,7 +91,6 @@ manageExamRouter.route("/")
             res.status(403).json({ "msg": "error in get all exams for creator" });
         }
     })
-
 
 
     module.exports = manageExamRouter;
