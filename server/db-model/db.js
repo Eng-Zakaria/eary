@@ -112,7 +112,7 @@ module.exports = class MySql {
         return new Promise(async(resolve, reject) => {
             const query = `SELECT ${primaryColumnName} FROM ${tablePrimaryKey} WHERE ${foreignKeyColumnName}= ? AND ${primaryColumnName}= ?`;
             const [result] = await MySql.pool.query(query, [foreignKey, primaryKey]);
-
+       
             if (result[0]) {
              
                 return resolve(true);

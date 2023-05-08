@@ -14,18 +14,18 @@ appExamRouter.route("/").get(async(req, res) => {
     res.status(200).json(exams);
 })
 
-appExamRouter.get("/", async(req, res) => {
+appExamRouter.get("/take/:idExam", async(req, res) => {
     try {
         
  console.log("here in deeeepepeee");
-        const questionsWithAnswers = await QuestionDB.getStatesQuestionsWithoutCorrectAnswers(req.userId, 1);
+        const questionsWithAnswers = await QuestionDB.getStatesQuestionsWithoutCorrectAnswers(req.params.idExam, 1);
 
         res.status(200).json(questionsWithAnswers);
     } catch (error) {
         res.status(403).json([]);
     }
 });
-/*appExamRouter.post("/:examId/submit", async(req, res) => {
+/*appExamRouter.post("/take/:examId/submit", async(req, res) => {
 
 });
 */

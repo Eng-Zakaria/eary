@@ -62,12 +62,14 @@ module.exports = class AnswersDB {
             const [answerObjs] = await MySql.pool.query(command, [questionId, IS_CORRECT]);
             return answerObjs;
         }
-        static async updateAnswers(examId, questionId, indicesObj,result) {
+        static async updateAnswers(examId, questionId, indicesObj,resultForTrace) {
             let finalResult = {};
 
             try {
-                const valid = await MySql.validForeignKey('questions', 'question_id', questionId, 'id_exam', examId);
-                if (!valid){
+
+                const result = await MySql.validForeignKey('questions', 'question_id',questionId,'id_exam', examId);
+                if (!result){
+                    
                     return { 'INVALID_QUESTION': [examId, questionId, Object.keys(indicesObj)] };
                 }
                 const indices = Object.keys(indicesObj);
@@ -78,10 +80,9 @@ module.exports = class AnswersDB {
                         `id_question = ${questionId} AND answer_index = ${index}`,index);
 
                         if(finalResult[questionId]['error']){
-                            console.log("here");
-                         
-                            result[questionId] = result[questionId] || [];
-                            result[questionId].push(index);
+                       
+                            resultForTrace[questionId] = resultForTrace[questionId] || [];
+                            resultForTrace[questionId].push(index);
                         }
                     
                 }

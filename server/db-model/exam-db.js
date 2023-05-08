@@ -56,17 +56,31 @@ module.exports = class ExamDB {
         static async checkIsExamBelongToTheUser(creatorId,examId){
             try{
             const valid = await MySql.validForeignKey('exams','exam_id',examId,'id_creator',creatorId);
+         
             return valid;
+        
             }catch(error){
 
             return false;
 
             }
         }
+        static async validQuestion(examId, questionId) {
+            try {
+                
+                const result = await MySql.validForeignKey('questions', 'question_id',questionId,'id_exam', examId);
+                return result;
+            } catch (error) {
+                return false;
+            }
+        
+        }
+      
         static async validExams(creatorId,examIds){
             if(!Array.isArray(examIds)){
                 examIds = [examIds];
             }
+           
             let finalResult ={};
             for(const id of examIds)
                 finalResult[id] =await ExamDB.checkIsExamBelongToTheUser(creatorId,id);

@@ -37,15 +37,7 @@ module.exports = class QuestionDB extends AnswersDB {
                 return false;
             }
         }
-        static async validQuestion(examId, questionId) {
-            try {
-                const result = await MySql.validForeignKey('questions', 'question_id', questionId, 'id_exam', examId);
-                return result;
-            } catch (error) {
-                return false;
-            }
-        }
-      
+   
         static async isActivatedQuestion(questionId) {
             try {
                 const valid = await MySql.checkState('questions', 'question_id', questionId, 'state', 1);
@@ -62,7 +54,7 @@ module.exports = class QuestionDB extends AnswersDB {
 
         static async getStatesQuestionsWithoutCorrectAnswers(examId, state) {
             const valid = await this.validActivatedExam(examId);
-            console.log(valid);
+   
 
             if (!valid) throw new Error(`ACCESS DENIED`);
 
@@ -88,13 +80,11 @@ module.exports = class QuestionDB extends AnswersDB {
             return this.prettyAnswers(result);
         }
         static async getJustQuestionWithCorrectAnswers(examId, questionId) {
-            const valid = this.validQuestion(examId, questionId);
-            if (!valid) throw new Error('NOT VALID');
 
             let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"',']') AS answers
          FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
             const [result] = await MySql.pool.query(command, [examId, questionId]);
-            return this.prettyAnswers(result[0]);
+            return this.prettyAnswers(result);
         }
         static async prettyAnswers(questions) {
 
@@ -116,7 +106,6 @@ module.exports = class QuestionDB extends AnswersDB {
 
             if (!valid) throw new Error(`ACCESS DENIED`);
 
-            valid = await this.validQuestion(examId, questionId);
             if (!valid) throw new Error('NOT VALID');
             valid = await this.isActivatedQuestion(questionId);
 
@@ -126,7 +115,7 @@ module.exports = class QuestionDB extends AnswersDB {
         static async getJustQuestionWithoutCorrectAnswers(examId, questionId) {
             try {
                 const valid = await this.validQuestionToView(examId, questionId);
-                console.log(valid);
+             
                 if (!valid) return {};
                 let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',']') AS answers FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
                 const [result] = await MySql.pool.query(command, [examId, questionId]);
@@ -140,10 +129,11 @@ module.exports = class QuestionDB extends AnswersDB {
         static async updateQuestions(examId, questions) {
             let finalResult = {'errorExistInUpdatingQuestions' : []};
             for (const question of questions) {
+
                 const questionId = QuestionDB.processQuestionData(question);
 
                 finalResult[questionId] = finalResult[questionId] || [];
-
+           
                 await QuestionDB.updateAnswersWithQuestion(examId, questionId, question, finalResult);
                 //[id_exam ,type , header,description,state	,rank,file_path	,icon_path	,default_point,created_at	,actived_at	,modified_at	]
 
@@ -177,7 +167,7 @@ module.exports = class QuestionDB extends AnswersDB {
         static async updateAnswersWithQuestion(exam_id, questionId, question, finalResult) {
             if (question.answers) {
                 let result  ={};
-                let resultAnswers = await QuestionDB.updateAnswers(exam_id, questionId, question.answers,result);
+                let resultAnswers = await QuestionDB.updateAnswers(exam_id,questionId, question.answers,result);
                 finalResult[questionId].push({
                     answers: resultAnswers
                 });
