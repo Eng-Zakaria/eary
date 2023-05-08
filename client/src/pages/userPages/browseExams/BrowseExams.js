@@ -30,7 +30,7 @@ const BrowseExams = () => {
               <p className="card-text">Duration: {exam.duration_mins} minutes</p>
               <p className="card-text">Difficulty: {exam.difficultly}</p>
               <p className="card-text">Total Score: {exam.total_score}</p>
-              <Link to={`/exam/${exam.exam_id}`} className="btn btn-primary">View Exam</Link>
+              <Link to={`/browse-exam/${exam.exam_id}`} className="btn btn-primary">View Exam</Link>
             </div>
           </div>
         </div>

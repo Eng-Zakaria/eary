@@ -13,13 +13,13 @@ const EditQuestion = () => {
 
   // Use the useEffect hook to fetch question data from the server
   useEffect(() => {
-    axios.get(`http://localhost:3000/manage-exam/${Examid}/edit-question/${id}`, {
+    axios.get(`http://localhost:4000/api/exams/manage/questions/${Examid}/edit/${id}`, {
       headers: {
         token: auth.token,
       }
     })
     .then(response => {
-      setQuestion(response.data);
+      setQuestion(response.data[0]);
       console.log(response.data)
     })
     .catch(error => {
@@ -31,7 +31,8 @@ const EditQuestion = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Make a PUT request to update the question data on the server
-    axios.put(`http://localhost:4000/api/exams/manage/questions/${id}`, question, {
+    const questionData=[question]
+    axios.put(`http://localhost:4000/api/exams/manage/questions/${Examid}/edit/${id}`,questionData, {
       headers: {
         token: auth.token,
       }

@@ -30,7 +30,7 @@ const ExamTable = () => {
 
   // Define a function to handle deleting an exam
   const handleDeleteExam = (examId) => {
-    axios.delete(`http://localhost:4000/api/exams/${examId}`, {
+    axios.delete(`http://localhost:4000/api/exams/manage/questions/${examId}`, {
       headers: {
         token: auth.token,
       },

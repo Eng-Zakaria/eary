@@ -1,78 +1,145 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import { getAuthUser } from '../../../../helper/Storage';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateExam = () => {
-  // Get the exam ID from the URL params
-  const { examId } = useParams();
-
-  // Define exam data as an object
   const auth = getAuthUser();
-  const [exam, setExam] = useState({
-    header: '',
-    difficultly: '',
-    duration_mins: '',
-    description: '',
-    state: '',
-  });
+  const { examId } = useParams();
+  const [header, setHeader] = useState('');
+  const [description, setDescription] = useState('');
+  const [duration, setDuration] = useState('');
+  const [difficultly, setDifficulty] = useState('');
+  const [totalScore, setTotalScore] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigate();
 
-  // Use the useEffect hook to fetch exam data from the server
   useEffect(() => {
-    axios.get(`http://localhost:4000/api/exams/${examId}`, {
+    axios.get(`http://localhost:4000/api/exams/manage/${examId}`, {
       headers: {
         token: auth.token,
       },
-    }).then(response => {
-      setExam(response.data);
-      console.log(response.data);
-    }).catch(error => {
-      console.error('Error fetching exam data:', error);
-    });
+    })
+      .then(response => {
+        const exam = response.data[0];
+        console.log(exam)
+        setHeader(exam.header);
+        setDescription(exam.description);
+        setDuration(exam.duration_mins);
+        setDifficulty(exam.difficultly);
+        setTotalScore(exam.total_score);
+      })
+      .catch(error => {
+        console.error('Error fetching exam data:', error);
+      });
   }, [auth.token, examId]);
 
-  // Define a function to handle updating an exam
-  const handleUpdateExam = () => {
-    axios.put(`http://localhost:4000/api/exams/${examId}`, exam, {
-      headers: {
-        token: auth.token,
-      },
-    }).then(response => {
-      console.log(response.data);
-    }).catch(error => {
-      console.error('Error updating exam:', error);
-    });
+  const handleHeaderChange = (event) => {
+    setHeader(event.target.value);
   };
 
-  // Define a function to handle changes to the exam data
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setExam(prevExam => ({ ...prevExam, [name]: value }));
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
+  };
+
+  const handleDurationChange = (event) => {
+    setDuration(event.target.value);
+  };
+
+  const handleDifficultyChange = (event) => {
+    setDifficulty(event.target.value);
+  };
+
+  const handleTotalScoreChange = (event) => {
+    setTotalScore(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    try {
+      const examData = {
+        header,
+        description,
+        duration_mins: duration,
+        difficultly,
+        total_score: totalScore,
+      };
+      const exam=[examData]
+
+      const response = await axios.put(`http://localhost:4000/api/exams/manage/${examId}`, exam, {
+        headers: {
+          token: auth.token,
+        },
+      });
+
+      setSuccessMessage(response.data.message);
+      navigate('/manage-exam');
+    } catch (error) {
+      setErrorMessage(error.response.data.message);
+    }
   };
 
   return (
-    <div>
-      <h2>Update Exam</h2>
-      <form onSubmit={handleUpdateExam}>
-        <div className="form-group">
-          <label htmlFor="header">Name:</label>
-          <input type="text" className="form-control" id="header" name="header" value={exam.header} onChange={handleChange} />
+    <div className="container my-4">
+      <h1 className="text-center mb-4">Update Exam</h1>
+      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="title" className="form-label">Title:</label>
+          <input
+            type="text"
+            id="title"
+            className="form-control"
+            value={header}
+            onChange={handleHeaderChange}
+            required
+          />
         </div>
-        <div className="form-group">
-          <label htmlFor="difficultly">Difficulty:</label>
-          <input type="text" className="form-control" id="difficultly" name="difficultly" value={exam.difficultly} onChange={handleChange} />
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">Description:</label>
+          <textarea
+            id="description"
+            className="form-control"
+            value={description}
+            onChange={handleDescriptionChange}
+            required
+          />
         </div>
-        <div className="form-group">
-          <label htmlFor="duration_mins">Duration:</label>
-          <input type="text" className="form-control" id="duration_mins" name="duration_mins" value={exam.duration_mins} onChange={handleChange} />
+        <div className="mb-3">
+          <label htmlFor="duration" className="form-label">Duration (in minutes):</label>
+          <input
+            type="number"
+            id="duration"
+            className="form-control"
+            value={duration}
+            onChange={handleDurationChange}
+            required
+          />
         </div>
-        <div className="form-group">
-          <label htmlFor="description">Description:</label>
-          <textarea className="form-control" id="description" name="description" value={exam.description} onChange={handleChange} />
+        <div className="mb-3">
+          <label htmlFor="difficulty" className="form-label">Difficulty:</label>
+          <select id="difficulty" className="form-select" value={difficultly} onChange={handleDifficultyChange} required>
+            <option value="">Select difficulty level</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
         </div>
-        <div className="form-group">
-          <label htmlFor="state">State:</label>
-          <input type="text" className="form-control" id="state" name="state" value={exam.state} onChange={handleChange} />
+        <div className="mb-3">
+          <label htmlFor="totalScore" className="form-label">Total Score:</label>
+          <input
+            type="number"
+            id="totalScore"
+            className="form-control"
+            value={totalScore}
+            onChange={handleTotalScoreChange}
+            required
+          />
         </div>
         <button type="submit" className="btn btn-primary">Update Exam</button>
       </form>
