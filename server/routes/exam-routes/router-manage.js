@@ -74,8 +74,6 @@ res.status(200).json(result);
 
 manageExamRouter.route("/")
     .all((req, res, nxt) => {
-        console.log('in manage');
-        console.log("spcific in here");
         nxt();
     })
     .post(async(req, res) => {

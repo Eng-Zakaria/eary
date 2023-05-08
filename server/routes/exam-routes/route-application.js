@@ -2,7 +2,6 @@ const express = require('express');
 const appExamRouter = express.Router();
 const ExamDB = require('../../db-model/exam-db');
 const QuestionDB = require('../../db-model/question-db');
-const MySql = require('../../db-model/db');
 
 
 appExamRouter.route("/").all((req, res, nx) => {
