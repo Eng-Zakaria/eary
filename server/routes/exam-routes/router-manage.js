@@ -40,8 +40,6 @@ res.status(200).json(result);
 })
     
 
-
-
 manageExamRouter.route("/questions/:idExam")
 .all((req,res,nxt) => {
 req.examId = req.params.idExam;
