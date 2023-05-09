@@ -1,5 +1,5 @@
 import React from "react";
-// import "./ExamCard.css";
+import "./style/ExamCard.css"
 
 function ExamCard({ exam }) {
   return (

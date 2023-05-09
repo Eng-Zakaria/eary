@@ -30,7 +30,7 @@ const ExamDetails = () => {
     .catch(error => {
       console.error('Error fetching question data:', error);
     });
-  }, []);
+  }, [auth.token, id]);
 
   const handleDeleteQuestion = (questionId) => {
     axios.delete(`http://localhost:4000/api/exams/manage/questions/${id}/edit/${questionId}`, {

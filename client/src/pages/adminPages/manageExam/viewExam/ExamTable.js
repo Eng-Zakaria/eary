@@ -21,7 +21,7 @@ const ExamTable = () => {
     }).catch(error => {
       console.error('Error fetching exam data:', error);
     });
-  }, []);
+  }, [auth.token]);
 
   // Define a function to handle creating a new exam
   const handleCreateExam = () => {
