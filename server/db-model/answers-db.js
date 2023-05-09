@@ -43,13 +43,19 @@ module.exports = class AnswersDB {
             }
             return false;
         }
-        static async getAnswersWithCorrectAnswer(questionId) {
-            let selectCommand = `SELECT answer_index,answer,is_correct,point,modified_at FROM answers WHERE id_question = ?`
-            const [answerObjs] = await MySql.pool.query(selectCommand, [questionId]);
-            return {
-                questionId: answerObjs
-            };
+        static async getAnswersWithCorrectAnswer(questions) {
+          //  let ids = objExpanded.getAllDataAttr(questions,'question_id');
+            for(let i in questions){
+            let selectCommand = `SELECT answer_index,answer,is_correct,point,modified_at FROM answers WHERE id_question = ?`;
+            
+            const [answerObjs] = await MySql.pool.query(selectCommand, [questions[i].question_id]);
+            console.log(answerObjs);
+            let answers = objExpanded.mergeInOneShotAnswer(answerObjs);
+            questions[i].answers = answers;
+            console.log(answers[0]);
+            }
         }
+        
         static async getAnswersWithoutCorrectAnswer(questionId) {
             let selectCommand = `SELECT answer_index,answer FROM answers WHERE id_question = ?`
             const [answerObjs] = await MySql.pool.query(selectCommand, [questionId]);

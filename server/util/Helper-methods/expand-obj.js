@@ -75,7 +75,7 @@ const indexOfByAttrsValues = (arrayOfObjs, objComparison = {}) => {
             }
         }
         if (equal)
-            indices.push(i);
+            indices.push    (i);
 
     }
     return indices;
@@ -102,6 +102,8 @@ const deleteMultiAttrsVal = (objsArr, keys) => {
     }
     return objsArr;
 }
+
+
 const getJustHashedToTrue= (obj) =>{
     const trulyValues ={};
     const unTrulyValue = {};
@@ -132,7 +134,30 @@ const ahemedAshref = (arrOfArr = [] , getOutIndex , nameOfAttr = []) => {
     })
     return objResult;
 }
+const mergeInOneShotAnswer = (objsArr = [{},{},{}]) =>{
+let wholeResult = [];
+objsArr.map((obj) =>{
+    let arr = []; 
+    Object.keys(obj).forEach((key) => arr.push(obj[key]));
+
+    wholeResult.push(arr);
+    
+});
+  return wholeResult;
+};
+
+ 
+const getAllDataAttr = (objsArr=[] , attr)=>{
+    let result = [];
+objsArr.forEach((obj) => {
+result.push(obj[attr]);
+
+});
+return getAllDataAttr;
+}
 module.exports = {
+    getAllDataAttr,
+    mergeInOneShotAnswer,
     appendObjToObjs,
     appendObjToObjsWithFunction,
     adder,
@@ -144,6 +169,6 @@ module.exports = {
     boundArrayString,
     getJustHashedToTrue,
     appendAttrValToEachAttrObj,
-    isEmptyObject
+    isEmptyObject 
 
 }
