@@ -20,6 +20,7 @@ import UpdateExam from "./pages/adminPages/manageExam/createExam/UpdateExam";
 import EditQuestion from "./pages/adminPages/manageExam/createExam/EditQuestion";
 import ExamsGrid from "./pages/userPages/browseExams/BrowseExams";
 import BrowseExams from "./pages/userPages/browseExams/BrowseExams";
+import TakeExam from "./pages/userPages/takeExam/TakeExam";
 
 export const router = createBrowserRouter([
   {
@@ -103,7 +104,16 @@ export const router = createBrowserRouter([
     },
     {
       path: "/browse-exam",
-      element: <ExamsGrid />,
+      children:[{
+        path: "",
+        element: <BrowseExams />
+      },
+      {
+        path:":id",
+        element:<TakeExam />
+      }
+      
+      ]
     }
    
     ],
