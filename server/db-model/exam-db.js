@@ -75,7 +75,6 @@ module.exports = class ExamDB {
             }
         
         }
-      
         static async validExams(creatorId,examIds){
             if(!Array.isArray(examIds)){
                 examIds = [examIds];

@@ -6,11 +6,12 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix + ".mp3");
+    cb(null, file.req.questionId + "-" + uniqueSuffix + ".mp3");
   },
 });
 
 const fileFilter = function (req, file, cb) {
+  
   if (file.mimetype.startsWith("audio/")) {
     cb(null, true);
   } else {

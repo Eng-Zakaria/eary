@@ -23,7 +23,7 @@ appExamRouter.route("/take/:idExam")
     try {
         
        console.log("here in deep");
-        const questionsWithoutAnswers = await QuestionDB.getQuestionsWithCorrectAnswers(req.params.idExam, 1);
+        const questionsWithoutAnswers = await QuestionDB.getQuestionsWithCorrectAnswers(req.params.idExam);
 
         console.log(questionsWithoutAnswers);
         res.status(200).json(questionsWithoutAnswers);

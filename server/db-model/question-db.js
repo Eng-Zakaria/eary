@@ -50,16 +50,16 @@ module.exports = class QuestionDB extends AnswersDB {
 
 
         static async getQuestionsWithCorrectAnswers(examId) {
-            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"' ,']')AS answers
-        from questions JOIN answers ON  questions.id_exam = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId]);
-       
-            return this.prettyAnswers(result);
+            const [questions]  = await MySql.pool.query('SELECT * from questions where id_exam = ?;',examId);
+            console.log("here");
+            console.log(questions);
+            await QuestionDB.getAnswersWithCorrectAnswer(questions);
+                 console.log(questions);
+            return questions;
         }
         
         static async getQuestionsWithoutCorrectAnswers(examId, state) {
-            const valid = await this.validActivatedExam(examId);
-            if (!valid) throw new Error(`ACCESS DENIED`);
-
+        
             const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',']')AS answers
         from questions JOIN answers ON  questions.id_exam = ? AND questions.state = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId, state]);
             return this.prettyAnswers(result);
