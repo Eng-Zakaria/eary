@@ -75,6 +75,7 @@ module.exports = class ExamDB {
             }
         
         }
+        
         static async validExams(creatorId,examIds){
             if(!Array.isArray(examIds)){
                 examIds = [examIds];
@@ -126,6 +127,7 @@ module.exports = class ExamDB {
 
         }
         static async getJustExam(creatorId,examId){
+            console.log(creatorId,examId);
             const command = `SELECT * FROM exams WHERE id_creator = ? AND exam_id = ?`;
              const [result] = await MySql.pool.query(command,[creatorId,examId]);
             return result;

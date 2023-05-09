@@ -40,6 +40,7 @@ res.status(200).json(result);
     
 
 
+
 manageExamRouter.route("/questions/:idExam")
 .all((req,res,nxt) => {
 req.examId = req.params.idExam;
@@ -62,7 +63,6 @@ nxt();
 
 
 
-
 manageExamRouter.route("/:idExam")
 .all((req,res,nxt) =>{
 req.examId = req.params.idExam;
@@ -78,7 +78,7 @@ nxt();
    res.status(200).json(result);
 })
 .get(async (req,res) => {
-const exam = await ExamDB.getJustExam(req.examId);
+const exam = await ExamDB.getJustExam(req.userId,req.examId);
 res.status(200).json(exam);
 })
 .delete(async (req,res) =>{
@@ -88,6 +88,11 @@ res.status(200).json(exam);
      else
      res.status(200).json(result);
 })
+
+
+
+
+
 
 manageExamRouter.route("/")
     .all((req, res, nxt) => {
