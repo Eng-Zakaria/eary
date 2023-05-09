@@ -8,7 +8,7 @@ const TakeExam = () => {
   const [examData, setExamData] = useState(null);
 
   useEffect(() => {
-    axios.get(`https://localhost:4000/exams/take/${id}`)
+    axios.get(`http://localhost:4000/exams/take/${id}`)
       .then(response => {
         setExamData(response.data);
         console.log(response.data)
