@@ -7,6 +7,7 @@ const ExamDB = require("../../db-model/exam-db");
 const QuestionDB = require('../../db-model/question-db');
 const Exam = require("../../models/exam");
 const {validExam,validQuestion} = require("../../middleware/validExams");
+const upload = require("../../middleware/uploadaudio")
 // don't forget you have to set the id admin when you validate in db by just one quick line
 //                                               req.body.adminId = id(FROM DB)
 
@@ -50,7 +51,7 @@ nxt();
     const result = await QuestionDB.getQuestionsWithCorrectAnswers(req.examId);
     res.status(200).json(result);
 })
-.post(async (req,res) =>{
+.post(upload.single('file_path'),async (req,res) =>{
     const result = await QuestionDB.savaQuestions(req.examId,req.body);
     if(result.errorExistInInsertingQuestions)
     res.status(400).json(result);
