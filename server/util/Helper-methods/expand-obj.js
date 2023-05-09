@@ -75,7 +75,7 @@ const indexOfByAttrsValues = (arrayOfObjs, objComparison = {}) => {
             }
         }
         if (equal)
-            indices.push(i);
+            indices.push    (i);
 
     }
     return indices;
@@ -102,6 +102,8 @@ const deleteMultiAttrsVal = (objsArr, keys) => {
     }
     return objsArr;
 }
+
+
 const getJustHashedToTrue= (obj) =>{
     const trulyValues ={};
     const unTrulyValue = {};
@@ -144,6 +146,6 @@ module.exports = {
     boundArrayString,
     getJustHashedToTrue,
     appendAttrValToEachAttrObj,
-    isEmptyObject
+    isEmptyObject 
 
 }

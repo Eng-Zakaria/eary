@@ -2,7 +2,8 @@ const express = require('express');
 const appExamRouter = express.Router();
 const ExamDB = require('../../db-model/exam-db');
 const QuestionDB = require('../../db-model/question-db');
-const {validExam,validQuestion,validExamToView,validQuestionToView} = require('../../middleware/validExams');
+const {validExam,validQuestion,validExamToView} = require('../../middleware/validExams');
+
 appExamRouter.route("/")
 .all((req, res, nxt) => {
     console.log('in route of the applicators');
@@ -22,9 +23,10 @@ appExamRouter.route("/take/:idExam")
     try {
         
        console.log("here in deep");
-        const questionsWithAnswers = await QuestionDB.getStatesQuestionsWithoutCorrectAnswers(req.params.idExam, 1);
+        const questionsWithoutAnswers = await QuestionDB.getQuestionsWithCorrectAnswers(req.params.idExam, 1);
 
-        res.status(200).json(questionsWithAnswers);
+        console.log(questionsWithoutAnswers);
+        res.status(200).json(questionsWithoutAnswers);
     } catch (error) {
         res.status(403).json({});
     }
@@ -33,10 +35,16 @@ appExamRouter.route("/take/:idExam")
 res.status(200).json({});
 });
 
+
 appExamRouter.get("/take/:examId/questions/:questionId",async(req, res) => {
     try {
         console.log(req.params.questionId,req.params.examId);
+        console.log("----------------------");
+      
         const justQuestionWithAnswers = await QuestionDB.getJustQuestionWithoutCorrectAnswers(req.params.examId, req.params.questionId);
+
+        console.log(justQuestionWithAnswers);
+        console.log("in more in");
         res.status(200).json(justQuestionWithAnswers);
     } catch (error) {
         res.status(403).json({});

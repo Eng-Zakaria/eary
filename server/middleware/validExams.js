@@ -44,16 +44,6 @@ const validExamToView = async(req,res,nxt) => {
     }
 }
 }
-const validQuestionToView = async(req,res,nxt) => {
-    let valid = await QuestionDB.isActivatedQuestion(req.questionId);
-
-    if(!valid){
-        res.status(403).json({msg : "you'r trying to get doesn't exist question (s)","exam_id" : req.examId,"question_id":req.questionId });
-
-    }else{
-        nxt();
-    }
-}
 
 
 
@@ -61,5 +51,5 @@ module.exports = {
     validExam,
     validQuestion,
     validExamToView,
-    validQuestionToView
+    
 };

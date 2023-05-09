@@ -1,7 +1,6 @@
 const MySql = require('./db');
 const AnswersDB = require('./answers-db');
 
-const { log } = require('console');
 const  objExpanded  = require('../util/Helper-methods/expand-obj');
 
 module.exports = class QuestionDB extends AnswersDB {
@@ -33,36 +32,27 @@ module.exports = class QuestionDB extends AnswersDB {
 
      
    
-        static async isActivatedQuestion(questionId) {
-            try {
-                const valid = await MySql.checkState('questions', 'question_id', questionId, 'state', 1);
-                return valid;
-            } catch (error) {
-                return false;
-            }
-        }
+  
         static async getStatesQuestionsWithCorrectAnswers(examId, state) {
-            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"' ,']')AS answers
-        from questions JOIN answers ON  questions.id_exam = ? AND questions.state = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId, state]);
+          
+            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"' ,']')AS answers from questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ${examId}  GROUP by questions.question_id;`);
+            console.log(res);
             return this.prettyAnswers(result);
         }
 
         static async getStatesQuestionsWithoutCorrectAnswers(examId, state) {
-            const valid = await this.validActivatedExam(examId);
-   
-
-            if (!valid) throw new Error(`ACCESS DENIED`);
-
+            
             const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',']')AS answers
-        from questions JOIN answers ON  questions.id_exam = ? AND questions.state = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId, state]);
-            return this.prettyAnswers(result);
-
+            from questions JOIN answers ON  questions.id_exam = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId]);
+           
+                return this.prettyAnswers(result);
         }
 
 
         static async getQuestionsWithCorrectAnswers(examId) {
             const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"' ,']')AS answers
         from questions JOIN answers ON  questions.id_exam = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId]);
+       
             return this.prettyAnswers(result);
         }
         
@@ -92,7 +82,6 @@ module.exports = class QuestionDB extends AnswersDB {
                 delete question['modified_at'];
                 question['answers'] = "[" + question.answers + "]";
                 question['answers'] = JSON.parse(question['answers']);
-
             }
             return questions;
         }
