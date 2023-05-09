@@ -1,5 +1,8 @@
 const { log } = require("console");
 const { object } = require("joi");
+const { appendObj } = require("./expand-map");
+const { restart } = require("nodemon");
+
 
 const appendObjToObjs = (objsArr, appendedObj) => {
     return objsArr.map((obj) => Object.assign(obj, obj, appendedObj));
@@ -123,28 +126,52 @@ return [trulyValues,unTrulyValue,allTrue];
 }
 
 
-const ahemedAshref = (arrOfArr = [] , getOutIndex , nameOfAttr = []) => {
-    let objResult = {};
-    arrOfArr.forEach( (array) => {
-        nameOfAttr.forEach((attr,index) => {
-            objResult[array[getOutIndex]] = {};
-            objResult[array][getOutIndex][attr] = array[index];
-        })
-
+const boundToOBjsOfObj = (arrOfArr = [] , getOutIndex , nameOfAttr = []) => {
+    let objResult = {} , result = {};
+   arrOfArr.forEach((arr) => {
+    let appendedObj = {};
+    arr.forEach((val,index) => {
+  
+        if(index === getOutIndex){
+            objResult[val] = appendedObj;
+        }else{
+            appendedObj[nameOfAttr[index]] = val;
+        }
     })
-    return objResult;
+
+   });
+    result[nameOfAttr[getOutIndex]] = objResult;
+    return result;
 }
-const mergeInOneShotAnswer = (objsArr = [{},{},{}]) =>{
+
+
+const mergeInOneShotAnswer = (objsArr = [] , skipKeys ={}) =>{
 let wholeResult = [];
 objsArr.map((obj) =>{
-    let arr = []; 
+    let arr = [];
+    if(isEmptyObject(skipKeys))
     Object.keys(obj).forEach((key) => arr.push(obj[key]));
-
+    else 
+    Object.keys(obj).forEach((key) => {if(!skipKeys[key]) arr.push(obj[key])});
     wholeResult.push(arr);
     
 });
   return wholeResult;
 };
+const deleteObjsInCaseOf = (arrObjs =[] , deletedKeys) =>{
+arrObjs.forEach((obj , index,array) => {
+    
+    if(hasKey(obj,deletedKeys)) array.splice(index,1);
+
+});
+
+}
+const hasKey = (obj,keys) =>{
+keys.forEach(key =>{
+if(obj[key]) return true;
+});
+return false;
+}
 
  
 const getAllDataAttr = (objsArr=[] , attr)=>{
@@ -169,6 +196,7 @@ module.exports = {
     boundArrayString,
     getJustHashedToTrue,
     appendAttrValToEachAttrObj,
-    isEmptyObject 
+    isEmptyObject ,
+    deleteObjsInCaseOf
 
 }

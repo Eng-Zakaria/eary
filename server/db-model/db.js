@@ -1,10 +1,10 @@
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
+const path  = require('path');
 const { log } = require('console');
 const { restart } = require('nodemon');
 
 dotenv.config();
-
 module.exports = class MySql {
     constructor() {
         if (this instanceof MySql) {
@@ -146,6 +146,7 @@ module.exports = class MySql {
                 return reject(false);
             }
         });
+        
     }
 
     /**

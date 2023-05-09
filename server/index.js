@@ -11,7 +11,8 @@ const authRouter = require("./routes/authRouter");
 const examsAppRouter = require("./routes/exam-routes/route-application");
 const examsManageRouter = require("./routes/exam-routes/router-manage");
 const admin = require("./middleware/admin");
-
+const answerDto = require('./db-model/DTO/answers-dto');
+const questionDTO = require('./db-model/DTO/questions.dto');
 app.use("/api/exams/manage/",admin, examsManageRouter);
 
 app.use("/exams", examsAppRouter);

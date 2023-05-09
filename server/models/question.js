@@ -8,12 +8,13 @@ const arrayExpanded = require('../util/Helper-methods/expand-array');
 
 module.exports = class Question extends Answers {
     //initializing = false;
-    static ids = 0;
-    constructor(idCreator, header, description, type, rank, answers, indicesOfCorrectAnswers, points, defaultValueForPoint, file, icon, dataOfCreation = new Date(), lastModification = new Date(), active = true) {
-        super(answers, indicesOfCorrectAnswers, type, points, defaultValueForPoint);
+    constructor( answersModule,  defaultValueForPoint = 0,id,idCreator,active  ,header, description, type,
+        rank, file, icon, dataOfCreation = new Date(), lastModification = new Date()){
+       
+        super( answersModule.getAnswers(),answersModule.getCorrectAnswerAsIndexes(),answersModule.getAllPoints(),defaultValueForPoint );
         //  if (!this.initializing)
         //    throw new Error(`The constructor is private, please use createQuestion() or any alternative see the Readme for answer module.`);
-        this._id = idForAllQuestions++;
+        this._id = id;
         this._header = header;
         this._description = description;
         this._rank = rank;
@@ -122,9 +123,6 @@ module.exports = class Question extends Answers {
         this.appendDataQuestionToDataObj(data);
         return data;
     }
-    checkIsAnswerCorrectByIndexes() {
-
-    }
     getType() {
         return this._type;
     }
@@ -167,10 +165,5 @@ module.exports = class Question extends Answers {
         }
         return data;
     }
-    static checkTogether(modules, answersIndices) {
-
-        super.checkTogether(modules, answersIndices);
-    }
-
-
+  
 }

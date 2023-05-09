@@ -1,28 +1,28 @@
 const arrayExpanded = require("../util/Helper-methods/expand-array");
+
+
 module.exports = class Answers {
 
-    constructor(answers, indicesOfCorrectAnswers, points, defaultValueForPoint) {
+    constructor(answers,   indicesOfCorrectAnswers , points,defaultValueForPoint =0 ) {
         //  if (!this.initializing)
         //    throw new Error(`The constructor is private, please use createAnswersModule() or any alternative see the Readme for answer module.`);
         if (!Array.isArray(answers))
             throw new Error("answers must be Array entry");
 
         let answerValues = [...new Set(answers)];
-
-        let cCorrectAnswerIndexes = arrayExpanded.boundToArray(indicesOfCorrectAnswers);
-
-        if (!arrayExpanded.areValidIndexesToDealWith(answerValues, cCorrectAnswerIndexes, true)) {
-
-            throw new Error("indexes are out of bounded");
-        }
-
+    
         this._answers = answerValues;
-        this._correctAnswersIndexes = cCorrectAnswerIndexes;
-
+        this._correctAnswersIndexes = Answers.indicesHandler(indicesOfCorrectAnswers , this._answers);
         this._points = points;
         this._defaultPoint = defaultValueForPoint;
     }
-
+    static indicesHandler(indices , answers){
+        indices =  arrayExpanded.boundToArray(indices);
+        if (!arrayExpanded.areValidIndexesToDealWith(answers, indices, true)) {
+            throw new Error("indexes are out of bounded");
+            }
+          return indices;
+    }
     appendAnswer(newAnswer, isCorrect = false, point = this._defaultPoint) {
         if (!newAnswer) return;
 
@@ -207,7 +207,6 @@ module.exports = class Answers {
     clear() {
             this._answers = [];
             this._correctAnswersIndexes = [];
-
             this._defaultPoint = 0;
             this._points = [];
         }
@@ -389,6 +388,9 @@ module.exports = class Answers {
 
     getDefaultValueOfPoint() {
         return this._defaultPoint;
+    }
+    setDefaultPoint(point){
+        this._defaultPoint = point;
     }
 
     mapAllIndexesToCorrectAnswersAsBool() {

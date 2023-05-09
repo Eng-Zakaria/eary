@@ -3,12 +3,16 @@ const AnswersDB = require('./answers-db');
 
 const  objExpanded  = require('../util/Helper-methods/expand-obj');
 
+const QuestionModule = require('../models/question');
+
+
 module.exports = class QuestionDB extends AnswersDB {
         constructor() {
             if (this instanceof QuestionDB) {
                 throw new Error('A static class cannot be instantiated');
             }
         }
+ 
 
         static async savaQuestions(examId,questions = []) {
             //'id_exam', in next feature  and i will use Object.keys() and i will not sent the 3rd param in insert
@@ -30,71 +34,54 @@ module.exports = class QuestionDB extends AnswersDB {
               "answers" : savingAnswersResult};
         }
 
-     
-   
-  
+        static async getQuestions(examId,state = '*'){
+            let stateCondition = ``;
+            if(state !== '*')
+            stateCondition = `AND state = ${state}`;
+
+            const command = `SELECT * from questions where id_exam = ?` + stateCondition;
+            const [questions]  = await MySql.pool.query(command,[examId]);
+            return questions;
+        }
+       
         static async getStatesQuestionsWithCorrectAnswers(examId, state) {
           
-            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"' ,']')AS answers from questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ${examId}  GROUP by questions.question_id;`);
-            console.log(res);
-            return this.prettyAnswers(result);
+            const questions = await this.getQuestions(examId,state);
+            await QuestionDB.getAnswers(questions);
+            return questions;
         }
-
+      
         static async getStatesQuestionsWithoutCorrectAnswers(examId, state) {
+            const questions = await this.getQuestions(examId,state);
+            await QuestionDB.getAnswersWithoutCorrect(questions);
+            return questions;
             
-            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',']')AS answers
-            from questions JOIN answers ON  questions.id_exam = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId]);
-           
-                return this.prettyAnswers(result);
         }
-
 
         static async getQuestionsWithCorrectAnswers(examId) {
-            const [questions]  = await MySql.pool.query('SELECT * from questions where id_exam = ?;',examId);
-            console.log("here");
-            console.log(questions);
-            await QuestionDB.getAnswersWithCorrectAnswer(questions);
-                 console.log(questions);
+            const questions = await this.getQuestions(examId);
+            await QuestionDB.getAnswers(questions);
             return questions;
         }
-        
-        static async getQuestionsWithoutCorrectAnswers(examId, state) {
-        
-            const [result] = await MySql.pool.query(`SELECT *, GROUP_CONCAT('[',answers.answer_index,',' ,'"',answers.answer,'"',']')AS answers
-        from questions JOIN answers ON  questions.id_exam = ? AND questions.state = ? AND answers.id_question=questions.question_id  GROUP by questions.question_id;`, [examId, state]);
-            return this.prettyAnswers(result);
+        static async getJustQuestion(examId,questionId,state = '*'){
+            let stateCondition = ``;
+            if(state !== '*')
+                stateCondition +=`AND state = ${state}`
+
+            const command = 'SELECT * from questions where question_Id = ? AND id_exam = ?' + stateCondition;
+            const [questions]  = await MySql.pool.query(command,[questionId,examId]);
+            return questions;
         }
         static async getJustQuestionWithCorrectAnswers(examId, questionId) {
-
-            let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',',',answers.is_correct,',',answers.point,',','"',answers.modified_at,'"',']') AS answers
-         FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
-            const [result] = await MySql.pool.query(command, [examId, questionId]);
-            return this.prettyAnswers(result);
+             const question =this.getJustQuestion(examId,questionId);
+             await QuestionDB.getAnswers(question);    
+            return question[0];
         }
-        static async prettyAnswers(questions) {
-
-            for (const question of questions) {
-                delete question['id_question'];
-                delete question['answer'];
-                delete question['answer_index'];
-                delete question['point'];
-                delete question['is_correct'];
-                delete question['modified_at'];
-                question['answers'] = "[" + question.answers + "]";
-                question['answers'] = JSON.parse(question['answers']);
-            }
-            return questions;
-        }
-   
+     
         static async getJustQuestionWithoutCorrectAnswers(examId, questionId) {
-            try {
-                let command = `SELECT * ,GROUP_CONCAT( '[',answers.answer_index ,',','"',answers.answer,'"',']') AS answers FROM questions JOIN answers ON answers.id_question=questions.question_id AND questions.id_exam = ? AND questions.question_id = ? GROUP BY questions.question_id`;
-                const [result] = await MySql.pool.query(command, [examId, questionId]);
-                const question = this.prettyAnswers(result);
-                return question;
-            } catch (error) {
-                throw error;
-            }
+            const questions =this.getJustQuestion(examId,questionId,1);
+            await QuestionDB.getAnswersWithoutCorrect(questions);
+            return questions[0];
         }
 
         static async updateQuestions(examId, questions) {
@@ -271,3 +258,20 @@ module.exports = class QuestionDB extends AnswersDB {
     console.time();
     test2();
     console.timeEnd();*/
+
+       /*
+        static async prettyAnswers(questions) {
+
+            for (const question of questions) {
+                delete question['id_question'];
+                delete question['answer'];
+                delete question['answer_index'];
+                delete question['point'];
+                delete question['is_correct'];
+                delete question['modified_at'];
+                question['answers'] = "[" + question.answers + "]";
+                question['answers'] = JSON.parse(question['answers']);
+            }
+            return questions;
+        }
+   */

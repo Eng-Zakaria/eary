@@ -1,7 +1,7 @@
 const MySql = require('./db');
 const objExpanded = require('../util/Helper-methods/expand-obj');
 const { log } = require('console');
-
+const AnswersModule = require('../models/answers');
 module.exports = class AnswersDB {
         constructor() {
             if (this instanceof AnswersDB) {
@@ -43,17 +43,18 @@ module.exports = class AnswersDB {
             }
             return false;
         }
-        static async getAnswersWithCorrectAnswer(questions) {
+        static async getAnswers(questions , skipKeys) {
           //  let ids = objExpanded.getAllDataAttr(questions,'question_id');
+          const selectCommand = `SELECT answer_index,answer,is_correct,point,modified_at FROM answers WHERE id_question = ?`;
             for(let i in questions){
-            let selectCommand = `SELECT answer_index,answer,is_correct,point,modified_at FROM answers WHERE id_question = ?`;
-            
             const [answerObjs] = await MySql.pool.query(selectCommand, [questions[i].question_id]);
-            console.log(answerObjs);
-            let answers = objExpanded.mergeInOneShotAnswer(answerObjs);
+            let answers = objExpanded.mergeInOneShotAnswer(answerObjs ,skipKeys);
             questions[i].answers = answers;
-            console.log(answers[0]);
             }
+            return questions;
+        }
+        static async getAnswersWithoutCorrect(questions){
+            await this.getAnswers(questions,{'is_correct' : true,'point':true,'modified_at' : true});
         }
         
         static async getAnswersWithoutCorrectAnswer(questionId) {
@@ -110,7 +111,12 @@ module.exports = class AnswersDB {
             if (!(index)) return 0;
             return index;
         }
-
+        static async getAnswersAsObjsArr(questionId){
+            const selectCommand = `SELECT answer_index,answer,is_correct,point,modified_at FROM answers WHERE id_question = ?`;
+            const [answerObjs] = await MySql.pool.query(selectCommand, [questionId]);
+            return answerObjs;
+        }
+       
     }
     /*
             let questions = [{

@@ -140,6 +140,9 @@ module.exports = class ExamDB {
                 return false;
             }
         }
+        static async getAnswers(answer){
+
+        }
         
     }
     /*

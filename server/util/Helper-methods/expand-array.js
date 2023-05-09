@@ -96,6 +96,7 @@ const swapElements = (array, index, indexToSwapWith) => {
     [array[index], array[indexToSwapWith]] = [array[indexToSwapWith], array[index]];
 }
 const isAliveArray = (array) => {
+    
     return (!array || !Array.isArray(array) || !array.length) ? false : true;
 }
 const deleteAndSetToNewArray = (arrayToBeNewSet, newArray) => {
@@ -113,7 +114,6 @@ const areValidIndexesToDealWith = (array, indexes, alterIndexesToNumberType = fa
 
         if (!(areAllValuesNumerical(indexes)))
             return false;
-
         let cloneIndexes = null;
 
         if (alterIndexesToNumberType) {
