@@ -6,19 +6,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("upload"));
 app.use(cors());
 const db = require("./db/dbConnection");
-const userRouter = require("./routes/userRoutes");
-const authRouter = require("./routes/authRouter");
+
 const examsAppRouter = require("./routes/exam-routes/route-application");
 const examsManageRouter = require("./routes/exam-routes/router-manage");
 const admin = require("./middleware/admin");
+const userRouter=require("./routes/userRouter");
+const autRouter=require("./routes/authRouter");
+const adminRouter=require("./routes/adminRouter");
 
+
+app.use("/api/auth",autRouter);
+app.use("/api/users",userRouter);
+app.use("/api/admin",adminRouter);
 app.use("/api/exams/manage/",admin, examsManageRouter);
 
 app.use("/exams", examsAppRouter);
 
-
-app.use("/users", userRouter);
-app.use("/auth", authRouter);
 
 
 

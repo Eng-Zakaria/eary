@@ -1,46 +1,35 @@
-const Joi = require("joi");
+const { body, validationResult } = require('express-validator');
 
-const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-});
+const registerValidationRules = [
+  body('name').notEmpty().isLength({min:3}),
+  body('email').isEmail(),
+  body('password').isLength({ min: 6 }),
+];
 
-const registerSchema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  phone: Joi.string().required(),
-});
+const loginValidationRules = [
+  body('email').isEmail(),
+  body('password').isLength({ min: 6 }),
+];
 
-const validateLogin = (req, res, next) => {
-  const { error } = loginSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
+function validateRegister(req, res, next) {
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    return next();
   }
-  next();
-};
+  return res.status(422).json({ errors: errors.array() });
+}
 
-const validateRegister = (req, res, next) => {
-  const { error } = registerSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
+function validateLogin(req, res, next) {
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    return next();
   }
-  next();
+  return res.status(422).json({ errors: errors.array() });
+}
+
+module.exports = {
+  registerValidationRules,
+  loginValidationRules,
+  validateRegister,
+  validateLogin,
 };
-
-const createUsersSchema = Joi.object({
-  name: Joi.string().min(3).max(20).required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  phone: Joi.string().required(),
-});
-
-const validateCreateUser = (req, res, next) => {
-  const { error } = createUsersSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
-  }
-  next();
-};
-
-module.exports = { validateLogin, validateRegister,validateCreateUser };

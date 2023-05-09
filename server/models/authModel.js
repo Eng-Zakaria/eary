@@ -1,7 +1,7 @@
 const db = require("../db/dbConnection");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const User = require("./user");
+const User = require("./userClass");
 class AuthModel {
   static async authenticateUser(email, password) {
     return new Promise((resolve, reject) => {
